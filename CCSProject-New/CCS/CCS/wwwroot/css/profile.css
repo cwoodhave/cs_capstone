@@ -1,0 +1,31 @@
+﻿body {
+   
+}
+
+
+.container {
+    width: 100%;
+   
+}
+
+    .container .left-size {
+        width: 40%;        
+        margin: 0;
+        padding: 0;        
+        left: 0;
+        text-align: left;
+    }
+
+
+    .container .right-size {
+        width: 40%;        
+        margin: 0;
+        padding: 0;
+        right: 0;
+        text-align: left;
+    }
+
+    .container .verticalLine {
+        
+        border-left: 1px solid #ff0000;
+    }

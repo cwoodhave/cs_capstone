@@ -1,0 +1,61 @@
+﻿@page
+@model CCS.Pages.Edit.Agencies.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<div class="row">
+    <div class="container-list">
+
+        <div class="text-align-center">
+            Agency Details
+        </div>
+
+
+        <p class="create-align">
+            <a asp-page="./Edit" asp-route-id="@Model.Agency.AgencyID" class="btn btn-primary">Edit</a> |
+            <a asp-page="./Index" class="btn btn-info">Back to List</a>            
+        </p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="border-bottom:2px solid black; border-top:0px;">
+                        @Html.DisplayNameFor(model => model.Agency.AgencyName)
+                    </th>
+                    <th style="border-bottom:2px solid black; border-top:0px;">
+                        @Html.DisplayNameFor(model => model.Agency.IsDonor)
+                    </th>
+                    <th style="border-bottom:2px solid black; border-top:0px;">
+                        @Html.DisplayNameFor(model => model.Agency.IsActive)
+                    </th>
+                    <th style="border-bottom:2px solid black; border-top:0px;">
+                        @Html.DisplayNameFor(model => model.Agency.Address)
+                    </th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(model => model.Agency.AgencyName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.Agency.IsDonor)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.Agency.IsActive)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.Agency.Address.StreetAddress1), @Html.DisplayFor(model => model.Agency.Address.CityName), @Html.DisplayFor(model => model.Agency.Address.StateShortName)
+                    </td>
+                    
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>

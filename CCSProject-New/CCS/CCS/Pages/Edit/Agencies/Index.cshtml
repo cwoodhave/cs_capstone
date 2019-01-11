@@ -1,0 +1,66 @@
+﻿@page
+@model CCS.Pages.Edit.Agencies.IndexModel
+
+@{
+	ViewData["Title"] = "Index";
+}
+
+
+<div class="row">
+    <div class="container-list">
+
+        <div class="text-align-center">
+            Agencies
+        </div>
+
+        <p class="create-align">
+            <a asp-page="Create" class="btn btn-info">Create New Agency</a>
+        </p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="border-bottom:2px solid black; border-top:0px;">
+                        @Html.DisplayNameFor(model => model.Agency[0].AgencyName)
+                    </th>
+                    <th style="border-bottom:2px solid black; border-top:0px;">
+                        @Html.DisplayNameFor(model => model.Agency[0].IsDonor)
+                    </th>
+                    <th style="border-bottom:2px solid black; border-top:0px;">
+                        @Html.DisplayNameFor(model => model.Agency[0].IsActive)
+                    </th>
+                    <th style="border-bottom:2px solid black; border-top:0px;">
+                        @Html.DisplayNameFor(model => model.Agency[0].Address)
+                    </th>
+                    <th style="border-bottom:2px solid black; border-top:0px;">
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Agency)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AgencyName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IsDonor)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IsActive)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Address.StreetAddress1), @Html.DisplayFor(modelItem => item.Address.CityName), @Html.DisplayFor(modelItem => item.Address.StateShortName)
+                        </td>
+                        <td>
+                            <a asp-page="./Edit" asp-route-id="@item.AgencyID" class="btn btn-primary">Edit</a> |
+                            <a asp-page="./Details" asp-route-id="@item.AgencyID" class="btn btn-secondary">Details</a> |
+                            <a asp-page="./Delete" asp-route-id="@item.AgencyID" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,68 @@
+﻿@page
+@model CCS.Pages.ManageAccount.CreateModel
+@{
+    ViewData["Title"] = "Create New User";
+}
+
+<hr />
+<div class="row">
+    <div class="container-list">
+
+        <div class="text-align-center">
+            Create New User
+        </div>
+
+        <hr />
+        
+        <form method="post" class="form-signin">
+            <div class="containerSize">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="NewUser.FirstName" class="control-label"></label>
+                            <input asp-for="NewUser.FirstName" class="form-control" />
+                            <span asp-validation-for="NewUser.FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="NewUser.LastName" class="control-label"></label>
+                            <input asp-for="NewUser.LastName" class="form-control" />
+                            <span asp-validation-for="NewUser.LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label asp-for="NewUser.UserName" class="control-label"></label>
+                        <input asp-for="NewUser.UserName" class="form-control" />
+                        <span asp-validation-for="NewUser.UserName" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label asp-for="NewUser.Password" class="control-label"></label>
+                        <input asp-for="NewUser.Password" class="form-control" />
+                        <span asp-validation-for="NewUser.Password" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <hr class="createHr"/>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <input type="submit" value="Save" class="btn btn-lg btn-outline-info btn-block" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <a asp-page="./Index" class="btn btn-lg btn-outline-info btn-block">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </form>       
+    </div>
+</div>

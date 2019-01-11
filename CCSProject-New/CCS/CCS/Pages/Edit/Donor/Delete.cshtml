@@ -1,0 +1,46 @@
+﻿@page
+@model CCS.Pages.Edit.Donor.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Agency</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Agency.AgencyName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Agency.AgencyName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Agency.IsDonor)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Agency.IsDonor)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Agency.IsActive)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Agency.IsActive)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Agency.Address)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Agency.Address.AddressID)
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="Agency.AgencyID" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>

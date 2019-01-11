@@ -1,0 +1,103 @@
+﻿
+<nav class="navbar-default navbar-expand-md navbar-fixed-left">
+    <div class="container">
+
+        <div class="navbar-header text-right px-2">
+            <div class="row">
+                <div class="col-10">
+                    <partial name="_LoginPartial" />
+                </div>
+
+                <div class="col-2">
+                    <div class="pt-3">
+                        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                            <i class="fas fa-th-list" style="color:white; font-size:30px;"></i>
+                            @*<span class="navbar-toggler-icon"></span>*@
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div id="navbar" class="navbar-collapse collapse" aria-expanded="false">
+
+            <ul class="nav navbar-nav px-2">
+                <li><hr class="border-light m-0" style="border: 0.5px solid;" /></li>
+                <li class="nav-item">
+                    <div class="row">
+                        <div class="col-1 ml-3 mt-2 p-0">
+
+                            <i class="fas fa-exchange-alt" style="color:white; font-size:15px;"></i>
+
+                        </div>
+                        <div class="col-8 m-0 p-0 sectionline">
+                            <a class="nav-link dropdown-toggle" href="#" id="navLinkColor" role="button" data-toggle="collapse" data-target="#transactions">Transactions</a>
+                            <ul class="collapse show ml-3 navbar-nav nav" id="transactions">
+                                <li class="nav-item"><a asp-page="/Transactions/IncomingDonation" class="nav-link">Donation In</a></li>
+                                <li class="nav-item"><a asp-page="/Transactions/OutgoingFood" class="nav-link">Donation Out</a></li>
+                                <li class="nav-item"><a asp-page="/Transactions/IncomingContainer" class="nav-link">Containers</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="row">
+                        <div class="col-1 ml-3 mt-2 p-0">
+                            <i class="fas fa-file-signature" style="color:white; font-size:15px;"></i>
+                        </div>
+                        <div class="col-8 m-0 p-0 sectionline">
+                            <a class="nav-link dropdown-toggle" href="#" id="navLinkColor" role="button" data-toggle="collapse" data-target="#reports">Reports</a>
+                            <ul class="collapse show ml-3 navbar-nav nav" id="reports">
+                                <li class="nav-item"><a asp-page="/Reports/Inventory" class="nav-link">Inventory</a></li>
+                                <li class="nav-item"><a asp-page="/Reports/GroceryRescue" class="nav-link">Grocery Rescue</a></li>
+                                <li class="nav-item"><a asp-page="/Reports/DonationsByAgency" class="nav-link">Donations By Agency</a></li>
+                                <li class="nav-item"><a asp-page="/Reports/DonationLineItems" class="nav-link">Donations By Line Items</a></li>
+                                <li class="nav-item"><a asp-page="/Reports/DonationTransactions" class="nav-link">Donations By Transactions</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="row">
+                        <div class="col-1 ml-3 mt-2 p-0">
+                            <i class="fas fa-wrench" style="color:white; font-size:15px;"></i>
+                        </div>
+                        <div class="col-8 m-0 p-0 sectionline">
+                            <a class="nav-link dropdown-toggle" href="#" id="navLinkColor" role="button" data-toggle="collapse" data-target="#management">Management</a>
+                            <ul class="collapse show ml-3 navbar-nav nav" id="management">
+                                <li class="nav-item"><a asp-page="/Edit/Agencies/Index" class="nav-link">Agencies</a></li>
+                                <li class="nav-item"><a asp-page="/Edit/Index" class="nav-link">Edit Database</a></li>
+                                <li class="nav-item"><a asp-page="/ManageAccount/Index" class="nav-link">Users</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</nav>
+
+@*User Edit*@
+<div class="modal fade bd-example-modal-lg" id="editModelLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Edit User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body h_iframe">
+                <iframe id="myFlame" class="embed-responsive-item" src="/Login/Profile" frameborder="0" allowtransparency="false" allowfullscreen height="500"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

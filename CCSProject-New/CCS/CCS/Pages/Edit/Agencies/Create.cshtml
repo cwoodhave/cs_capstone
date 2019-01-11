@@ -1,0 +1,142 @@
+﻿@page
+@model CCS.Pages.Edit.Agencies.CreateModel
+
+@{
+	Layout = "_FormLayout";
+	ViewData["Title"] = "Create";
+}
+
+<div id="app">
+    <h2>Create A New Agency</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form method="post" class="container">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="border border-secondary rounded bg-white p-3 mb-2">
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <div class="d-flex">
+                                <label asp-for="Agency.AddressID" class="control-label mr-auto"></label>
+                                <div v-if="isNew" class="pb-2">
+                                    <button class="btn btn-primary border-secondary shadow mt-2" v-on:click.prevent="toggleAddress">Select Address From List</button>
+                                </div>
+                                <div v-else class="pb-2">
+                                    <button class="btn btn-primary border-secondary shadow mt-2" v-on:click.prevent="toggleAddress">Add New Address</button>
+                                </div>
+                            </div>
+                            <div v-show="isNew">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="streetAddress1" class="control-label">Street Address 1</label>
+                                        <input id="streetAddress1" name="streetAddress1" class="form-control" v-model="street1" />
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="streetAddress2" class="control-label">Street Address 2</label>
+                                        <input id="streetAddress2" name="streetAddress2" class="form-control" v-model="street2"  />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label for="city" class="control-label">City</label>
+                                        <input id="city" name="city" class="form-control" v-model="city"  />
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="state" class="control-label">State</label>
+                                        <input id="state" name="state" class="form-control" v-model="state"  />
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="zip" class="control-label">Zip Code</label>
+                                        <input id="zip" name="zip" class="form-control" v-model="zip"  />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div v-show="!isNew">
+                                <vue-multiselect v-model="address" track-by="fullAddress" label="fullAddress" accesskey="id" style="padding: 0;"
+                                                 placeholder="Select An Address" :options="addresses" :class="[address === null ? 'is-invalid' : 'containerColor', 'form-control']" :searchable="true"></vue-multiselect>
+                                <input type="text" asp-for="Agency.AddressID" class="d-none form-control" v-model="addressFixed" />
+                                <span asp-validation-for="Agency.AddressID" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <label asp-for="Agency.AgencyName" class="control-label"></label>
+                            <input asp-for="Agency.AgencyName" class="form-control" />
+                            <span asp-validation-for="Agency.AgencyName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-2 text-center">
+                            <input asp-for="Agency.IsDonor" class="form-check-input" style="width: 1.25rem; height: 1.25rem;"  />
+                            <label asp-for="Agency.IsDonor" class="form-check-label ml-1" style="font-size: large;">
+                                    @Html.DisplayNameFor(model => model.Agency.IsDonor)
+                            </label>
+                        </div>
+
+                        <div class="form-group col-2 text-center">
+                            <input asp-for="Agency.IsActive" class="form-check-input" style="width: 1.25rem; height: 1.25rem;" />
+                            <label asp-for="Agency.IsActive" class="form-check-label ml-1" style="font-size: large;"> 
+                                @Html.DisplayNameFor(model => model.Agency.IsActive)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-12 text-center">
+                            <input type="submit" value="Create Agency" class="btn btn-success border-secondary shadow" />
+                            <a asp-page="Index" role="button" class="btn btn-warning border-secondary shadow">Cancel - Back to List</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+        Vue.component('vue-multiselect', window.VueMultiselect.default);
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                address: { id: '', fullAddress: 'Select An Address'},
+                addresses: [
+                    @foreach(var a in Model.Addresses)
+                    {
+                        @:{
+                        @:  id: '@a.AddressID',
+                        @:  fullAddress: '@a.StreetAddress1 @a.StreetAddress2 @a.CityName, @a.StateShortName @a.Zipcode'
+                        @:},
+                    }
+                ],
+                isNew: false,
+                street1: '',
+                street2: '',
+                city: '',
+                state: '',
+                zip: ''
+            },
+            computed: {
+                addressFixed: function () {
+                    return this.donor === null ? '' : this.address.id
+                },
+            },
+            methods: {
+                toggleAddress() {
+                    this.isNew = !this.isNew
+                    this.address = { id: '', fullAddress: 'Select An Address' }
+                    this.street1 = ''
+                    this.street2 = ''
+                    this.city = ''
+                    this.state = ''
+                    this.zip = ''
+                }
+            }
+        })
+    </script>
+}

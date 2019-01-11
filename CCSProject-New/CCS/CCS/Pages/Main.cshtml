@@ -1,0 +1,228 @@
+﻿@page
+@model MainModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<head>
+    <!-- Custom CSS -->
+    <link href="css/home.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div id="first-row" class="col-lg-3 order-lg-2 main-col pl-lg-1">
+                <div class="row">
+                    <div class="column-title center-text">TRANSACTIONS</div>
+                </div>
+
+                <div class="row btn-row">
+                    <div class="col btn-container">
+                        <a asp-page="/Transactions/IncomingDonation" role="button" class="mainPageBtn longBtn">
+                            <div class="donatinIn-Top-In vertical-center">
+                                <i class="fas fa-download" style="color:white; font-size:70px;"></i>
+                                @*<i class="fas fa-sign-in-alt" style="color:white; font-size:70px;"></i>*@
+                            </div>
+                            <hr />
+                            <div class="bottom-short-text vertical-center">
+                                DONATION IN
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="row btn-row">
+                    <div class="col btn-container">
+                        <a asp-page="/Transactions/OutgoingFood" role="button" class="mainPageBtn longBtn">
+                            <div class="donatinOut-Top-Out vertical-center">
+                                <i class="fas fa-upload" style="color:white; font-size:70px;"></i>
+                                @*<i class="fas fa-sign-out-alt" style="color:white; font-size:70px;"></i>*@
+                            </div>
+                            <hr />
+                            <div class="bottom-short-text vertical-center">
+                                DONATION OUT
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+
+
+
+                <div class="row btn-row">
+                    <div class="col btn-container">
+                        <a asp-page="/Transactions/IncomingContainer" role="button" class="mainPageBtn longBtn">
+                            <div class="foodPack vertical-center">
+                                <i class="fas fa-archive" style="color:white; font-size:70px;"></i>
+                            </div>
+                            <hr />
+                            <div class="bottom-short-text vertical-center">
+                                CONTAINERS
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-1 col-md-0 order-lg-1">
+                <div class="row divider-row">
+                    <div class="col border-right"> </div>
+                    <div class="col"> </div>
+                </div>
+            </div>
+            <div id="second-row" class="col-lg-3 order-lg-0 main-col">
+                <div class="row">
+                    <div class="column-title center-text">REPORTS</div>
+                </div>
+                <div class="row btn-row">
+                    <div class="col-6-13ths btn-container">
+                        <a asp-page="/Reports/Inventory" role="button" class="mainPageBtn">
+                            <div class="inventory vertical-center">
+                                <i class="fas fa-cubes" style="color:white; font-size:70px;"></i>
+                            </div>
+                            <hr />
+                            <div class="bottom-short-text vertical-center">
+                                INVENTORY
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-1-13ths"> </div>
+                    <div class="col-6-13ths btn-container">
+                        <a asp-page="/Reports/GroceryRescue" role="button" class="mainPageBtn">
+                            <div class="rescue vertical-center">
+                                <i class="fas fa-dolly" style="color:white; font-size:70px;"></i>
+                            </div>
+                            <hr />
+                            <div class="bottom-short-text">
+                                RESCUE
+                            </div>
+
+                        </a>
+                    </div>
+                </div>
+                <div class="row btn-row">
+                    <div class="col-6-13ths btn-container">
+                        <a asp-page="/Reports/DonationsByAgency" role="button" class="mainPageBtn">
+                            <div class="bothInOut vertical-center">
+                                <i class="fas fa-building" style="color:white; font-size:70px;"></i>
+                            </div>
+                            <hr />
+                            <div class="bottom-short-text">
+                                BY AGENCY
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-1-13ths"> </div>
+                    <div class="col-6-13ths btn-container">
+                        <a asp-page="/Reports/DonationLineItems" role="button" class="mainPageBtn">
+                            <div class="report-incoming vertical-center">
+                                <i class="fas fa-align-justify" style="color:white; font-size:70px;"></i>
+                            </div>
+                            <hr />
+                            <div class="bottom-short-text vertical-center">
+                                LINE ITEMS
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="row btn-row">
+                    <div class="col btn-container">
+                        <a asp-page="/Reports/DonationTransactions" role="button" class="mainPageBtn">
+                            <div class="report-incoming vertical-center">
+                                <i class="fas fa-receipt" style="color:white; font-size:70px;"></i>
+                            </div>
+                            <hr />
+                            <div class="bottom-short-text vertical-center">
+                                BY TRANSACTION
+                            </div>
+                        </a>
+                    </div>
+                    @*
+        <div class="col-1-13ths"> </div>
+        <div class="col-6-13ths btn-container">
+            <a asp-page="#" role="button" class="mainPageBtn">
+                <div class="rescue vertical-center">
+                    <i class="fas fa-gift" style="color:white; font-size:70px;"></i>
+                </div>
+                <hr />
+                <div class="bottom-short-text">
+                    IN-KIND SLIP
+                </div>
+            </a>
+        </div>
+                    *@
+                </div>
+            </div>
+            <div class="col-lg-1 col-md-0 order-lg-3">
+                <div class="row divider-row">
+                    <div class="col border-right"> </div>
+                    <div class="col"> </div>
+                </div>
+            </div>
+            <div id="third-row" class="col-lg-3 order-lg-4 main-col pl-lg-1">
+                <div class="row">
+                    <div class="column-title center-text">MANAGEMENT</div>
+                </div>
+                <div class="row btn-row">
+                    <div class="col btn-container">
+                        <a asp-page="/Edit/Agencies/Index" role="button" class="mainPageBtn longBtn">
+                            <div class="agencies vertical-center">
+                                <i class="fas fa-warehouse" style="color:white; font-size:70px;"></i>
+                            </div>
+                            <hr />
+                            <div class="bottom-short-text vertical-center">
+                                AGENCIES
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="row btn-row">
+                    <div class="col btn-container">
+                        <a asp-page="/Edit/Index" role="button" class="mainPageBtn longBtn">
+                            <div class="category vertical-center">
+                                <i class="fas fa-sitemap" style="color:white; font-size:70px;"></i>
+                            </div>
+                            <hr />
+                            <div class="bottom-short-text vertical-center">
+                                EDIT DATABASE
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="row  btn-row">
+                    @*
+                        <div class="col-6-13ths btn-container">
+                        <a asp-page="#" role="button" class="mainPageBtn">
+                            <div class="bothInOut vertical-center">
+                                <i class="fas fa-file-signature" style="color:white; font-size:70px;"></i>
+                            </div>
+                            <hr />
+                            <div class="bottom-short-text">
+                                CHANGE LOG
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-1-13ths"> </div>
+                        *@
+                    <div class="col btn-container">
+                        <a asp-page="/ManageAccount/Index" role="button" class="mainPageBtn">
+                            <div class="bothInOut vertical-center">
+                                <i class="fas fa-user" style="color:white; font-size:70px;"></i>
+                            </div>
+                            <hr />
+                            <div class="bottom-short-text">
+                                USERS
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>

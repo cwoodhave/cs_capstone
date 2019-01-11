@@ -1,0 +1,160 @@
+﻿@page
+@model CCS.Pages.Transactions.IncomingContainerModel
+
+@{
+    Layout = "_FormLayout";
+    ViewData["Title"] = "Container Management";
+}
+
+
+
+    <div id="app">
+
+        <h2 class="text-center mt-3">Incoming Container</h2>
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <form method="post" asp-page="IncomingContainer" class="needs-validation container pl-5 pr-5" novalidate>
+            <div class="border border-secondary  rounded bg-white p-3">
+                <div class="row mb-1">
+                    <div class="col-2 text-right">
+                        <label class="control-label mb-1 mt-1">Bin Number</label>
+                    </div>
+                    <div class="col">
+                        <input v-model="binNumber" type="number" asp-for="Container.BinNumber" min="1" class="form-control containerColor" v-on:change="binNumber < 0 ? binNumber = 0 : binNumber" />
+                        <div class="invalid-feedback">Bin Number is required!</div>
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-2 text-right">
+                        <label class="control-label mb-1 mt-1">Category</label>
+                    </div>
+                    <div class="col">
+                        <select asp-for="Container.FoodCategoryID"
+                                class="form-control containerColor" v-model="category" required>
+                            <option disabled value="" selected>Select Category</option>
+                            <option v-for="c in FoodCategories" :value="c.ID">{{c.Category}}</option>
+                        </select>
+                        <div class="invalid-feedback">Subcategory is required!</div>
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-2 text-right">
+                        <label class="control-label mb-1 mt-1">Description</label>
+                    </div>
+                    <div class="col">
+                        <input v-model="description" type="text" asp-for="Container.Description" class="form-control containerColor" />
+                        <div class="invalid-feedback">Description is required!</div>
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-2 text-right">
+                        <label class="control-label mb-1 mt-1">Weight</label>
+                    </div>
+                    <div class="col">
+                        <input v-model="weight" type="number" asp-for="Container.Weight" min="1" class="form-control containerColor" v-on:change="weight < 0 ? weight = 0 : weight" />
+                        <div class="invalid-feedback">Weight is required!</div>
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-2 text-right">
+                        <label class="control-label mb-1 mt-1">Location</label>
+                    </div>
+                    <div class="col">
+                        <input v-model="location" type="text" asp-for="Container.Location" class="form-control containerColor" />
+                        <div class="invalid-feedback">Location is required!</div>
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-2 text-right">
+                        <label class="control-label mb-1 mt-1">Date</label>
+                    </div>
+                    <div class="col">
+                        <datetime input-name="Container.DateCreated" v-model="date" format="MM-DD-YYYY h:mm a" id="'Container_DateCreated'" :name="'DateCreated'"
+                                  :input-class="[date === null ? 'is-invalid' : 'containerColor', 'form-control']" type="date" lang="en" style="width: 100%"/>
+                        <input type="text" class="form-control d-none" v-model="date" required />
+                        <div class="invalid-feedback">Date is required!</div>
+                    </div>
+                </div>
+                <div class="row pt-3">
+                    <div class="col-4"></div>
+                    <div class="col-1">
+                        <input type="submit" value="Save" class="btn btn-success border-secondary" />
+                    </div>
+                    <div class="col-2"></div>
+                    <div class="col-1">
+                        <a class="btn btn-warning border-secondary" asp-page="/Reports/Inventory" role="button">Cancel</a>
+                    </div>
+                    <div class="col-4"></div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+
+        Vue.component('datetime', DatePicker.default);
+        Vue.component('vue-multiselect', window.VueMultiselect.default);
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                binNumber: 0,
+                category: 0,
+                description: "",
+                weight: 0,
+                location: "",
+                //date: '@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")',
+                date: new Date (),
+                blockRemoval: true,
+                num: 1,
+                FoodCategories: [
+                    @foreach (var cat in Model.ViewModel.FoodCategories.Select((value, i) => new { i, value }))
+                    {
+                        if (cat.i == Model.ViewModel.FoodCategories.Count() - 1)
+                        {
+                            @:{ ID: @cat.value.FoodCategoryID , Category: '@cat.value.Description' }
+                        }
+                        else
+                        {
+                            @:{ ID: @cat.value.FoodCategoryID , Category: '@cat.value.Description' },
+                        }
+                    }
+                ],
+                computed: {
+                },
+                watch: {
+                },
+            },
+            methods: {
+            },
+            mounted() {
+            }
+        });
+
+
+    </script>
+}

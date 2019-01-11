@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/bootstrap/css/bootstrap-grid.min.css" />
+    <link rel="stylesheet" href="~/bootstrap/css/bootstrap-reboot.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <script defer src="~/bootstrap/js/bootstrap.min.js"></script>
+    <script defer src="~/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script defer src="~/js/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="~/css/login.css">
+    <script type="text/javascript">
+        var bgs = [
+            '../images/Login/1.jpg',
+            '../images/Login/2.jpg',
+            '../images/Login/3.png',
+            '../images/Login/4.jpg',
+            '../images/Login/5.jpg',
+            '../images/Login/6.jpeg',
+            '../images/Login/7.jpg',
+            '../images/Login/8.jpg',
+            '../images/Login/9.jpg',
+            '../images/Login/10.jpg',
+        ];
+
+        window.onload = function () {
+            var n = Math.floor(Math.random() * bgs.length);
+            document.body.style.backgroundImage = 'url(' + bgs[n] + ')';
+        }
+
+    </script>
+
+    <title>@ViewData["Title"] - CCS</title>
+</head>
+<body>
+    <div>
+        @RenderBody()
+    </div>
+</body>
+</html>

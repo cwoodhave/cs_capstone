@@ -1,0 +1,50 @@
+﻿@page
+@model CCS.Pages.Edit.DonationType.EditModel
+
+@{
+    //Layout = "_FormLayout";
+    ViewData["Title"] = "Edit";
+}
+
+<div class="row">
+    <div class="container-list">
+
+        <div class="text-align-center">
+            Edit Donation Type
+        </div>
+
+        <hr />
+
+        <form method="post" class="form-signin">
+            <div class="containerSize">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="DonationType.DonationTypeID" />
+                <div>
+                    <div class="form-group">
+                        <label asp-for="DonationType.Type" class="control-label"></label>
+                        <input asp-for="DonationType.Type" class="form-control" />
+                        <span asp-validation-for="DonationType.Type" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <hr class="createHr" />
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <input type="submit" value="Save" class="btn btn-lg btn-outline-info btn-block" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <a asp-page="./Index" class="btn btn-lg btn-outline-info btn-block">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+

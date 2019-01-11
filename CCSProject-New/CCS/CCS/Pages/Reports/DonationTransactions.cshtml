@@ -1,0 +1,624 @@
+﻿@page
+@using CCS.Models.ViewModels.Reports
+@model CCS.Pages.Reports.DonationTransactionsModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_FormLayout.cshtml";
+}
+
+<div id="app">
+
+    <h2 class="text-center p-3"><u>Donation Transactions Report</u></h2>
+    
+    <div class="border border-secondary bg-white rounded card">
+        <div class="card-header p-0">
+            <button class="text-center btn btn-secondary btn-block" role="button" v-on:click="searchExpanded = !searchExpanded">
+                <h4>Search Incoming/Outgoing Transactions <span :class="[searchExpanded ? 'fa-minus-square' : 'fa-plus-square', 'fas']"></span></h4>
+            </button>
+        </div>
+        <div class="card-body" v-show="searchExpanded">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label asp-for="InOutReport.StartDate" class="control-label"></label>
+                        <input type="text" class="form-control d-none" v-model="formStartDate" required/>
+                        <datetime input-name="InOutReport.StartDate" v-model="formStartDate" format="MM-DD-YYYY h:mm a" id="InOutReport_StartDate"
+                                  input-class="form-control" type="datetime" lang="en" width="100%" :minute-step="1" :clearable="false"></datetime>
+                        <span asp-validation-for="InOutReport.StartDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col">
+                        <label asp-for="InOutReport.EndDate" class="control-label"></label>
+                        <input type="text" class="form-control d-none" v-model="formEndDate" required/>
+                        <datetime input-name="InOutReport.EndDate" v-model="formEndDate" format="MM-DD-YYYY h:mm a" id="InOutReport_EndDate"
+                                  input-class="form-control" type="datetime" lang="en" width="100%" :minute-step="1" :clearable="false"></datetime>
+                        <span asp-validation-for="InOutReport.EndDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label asp-for="InOutReport.TransactionTypes" class="control-label"></label>
+                        <select asp-for="InOutReport.TransactionTypes" asp-items="Html.GetEnumSelectList<TransactionTypeInOut>()" class="form-control d-none" v-model="formTranTypeFixed"></select>
+                        <vue-multiselect v-model="formTranType" style="padding: 0;" :multiple="true" :close-on-select="false" track-by="text" label="text" :group-select="true" group-values="groupValues"
+                                         group-label="groupLabel" placeholder="Select Transaction Type" :options="transactionList" :searchable="true"></vue-multiselect>
+                        <span asp-validation-for="InOutReport.TransactionTypes" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col">
+                        <label asp-for="InOutReport.FoodCategories" class="control-label"></label>
+                        <select asp-for="InOutReport.FoodCategories" asp-items="Html.GetEnumSelectList<FoodCategoryType>()" class="form-control d-none" v-model="formFoodCatFixed"></select>
+                        <vue-multiselect v-model="formFoodCat" style="padding: 0;" :multiple="true" :close-on-select="false" track-by="text" label="text" :group-select="true" group-values="groupValues"
+                                         group-label="groupLabel" placeholder="Select Food Category" :options="foodCatList" :searchable="true" :hide-selected="true"></vue-multiselect>
+                        <span asp-validation-for="InOutReport.FoodCategories" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="d-flex">
+                        <label asp-for="InOutReport.Agencies" class="control-label mr-auto"></label>
+                        <div>
+                            <button class="btn btn-primary btn-sm border-secondary shadow" v-if="formAgencies.length" v-on:mousedown.prevent.stop="clearAll()">Clear All Agencies</button>
+                        </div>
+                    </div>
+                    <select asp-for="InOutReport.Agencies" class="form-control d-none" v-model="formAgenciesFixed">
+                        @foreach (var agency in Model.Agencies)
+                        {
+                            <option value="@agency.AgencyID">@agency.AgencyName - @agency.Address.StreetAddress1 @agency.Address.CityName, @agency.Address.StateShortName @agency.Address.Zipcode</option>
+                        }
+                    </select>
+                    <vue-multiselect v-model="formAgencies" :multiple="true" :close-on-select="false" track-by="text" label="text" :group-select="true" group-values="groupValues"
+                                     group-label="groupLabel" placeholder="Select Agencies" :options="agencyList" :searchable="true" :hide-selected="true">
+                        <template slot="clear" slot-scope="props">
+
+                        </template>
+                    </vue-multiselect>
+                    <span asp-validation-for="InOutReport.Agencies" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Search Database" class="btn btn-success shadow border-secondary"/>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    @if (Model.DonationTransaction != null)
+    {
+            <div class="border border-secondary mt-2 card">
+                <div class="card-header p-0">
+                    <button class="text-center btn btn-secondary btn-block" role="button" v-on:click="resultsExpanded = !resultsExpanded">
+                        <h4>Database Results <span :class="[resultsExpanded ? 'fa-minus-square' : 'fa-plus-square', 'fas']"></span></h4>
+                    </button>
+                </div>
+        
+                <div class="card-body" v-show="resultsExpanded">
+                    <div class="form-row">
+                        <div class="col-lg-3 form-group">
+                            <br />
+                            <label for="searchAgency">Refine Search By Agency</label>
+                            <input id="searchAgency" v-model="searchAgency" class="form-control" placeholder="Search Agency" />
+                        </div>
+                        <div class="col-lg-3 form-group">
+                            <br />
+                            <label for="searchCat">Refine Search By Category</label>
+                            <input id="searchCat" v-model="searchCat" class="form-control" placeholder="Search Category" />
+                        </div>
+                        <div class="col-lg-3 form-group border-left border-secondary">
+                            <label class="mb-0">Refine Search By Dates:</label><br />
+                            <label for="startDate">Start Date</label>
+                            <datetime v-model="startDate" format="MM-DD-YYYY h:mm a" id="startDate"
+                                      input-class="form-control" type="datetime" lang="en" width="100%" :minute-step="1" :clearable="false"></datetime>
+                        </div>
+                        <div class="col-lg-3 form-group">
+                            <br />
+                            <label for="endDate">End Date</label>
+                            <datetime v-model="endDate" format="MM-DD-YYYY h:mm a" id="endDate"
+                                      input-class="form-control" type="datetime" lang="en" width="100%" :minute-step="1" :clearable="false"></datetime>
+                        </div>
+                    </div>
+                    <table class="table table-hover table-sm table-bordered bg-light">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th v-on:click="sort('tType')" style="cursor: pointer" scope="col" class="text-nowrap">
+                                @Html.DisplayNameFor(model => model.DonationTransaction[0].TransactionType)
+                                <span :class="getArrowClasses('tType')" aria-hidden="true"></span>
+                            </th>
+                            <th v-on:click="sort('agency')" style="cursor: pointer" scope="col" class="text-nowrap">
+                                @Html.DisplayNameFor(model => model.DonationTransaction[0].Agency)
+                                <span :class="getArrowClasses('agency')" aria-hidden="true"></span>
+                            </th>
+                            <th v-on:click="sort('category')" style="cursor: pointer" scope="col" class="text-nowrap">
+                                @Html.DisplayNameFor(model => model.DonationTransaction[0].FoodCategory)
+                                <span :class="getArrowClasses('category')" aria-hidden="true"></span>
+                            </th>
+                            <th v-on:click="sort('date')" style="cursor: pointer" scope="col" class="text-nowrap">
+                                @Html.DisplayNameFor(model => model.DonationTransaction[0].TimeStamp)
+                                <span :class="getArrowClasses('date')" aria-hidden="true"></span>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <template v-for="(donation, index) in sortedDonations">
+                            <tr v-bind:key="index"v-on:click="donation.rowExpanded = !donation.rowExpanded">
+                                <td class="text-center"><span :class="[donation.rowExpanded ? 'fa-minus-circle' : 'fa-plus-circle', 'fa', 'text-success']"></span></td>
+                                <td>
+                                    {{donation.tType}}
+                                </td>
+                                <td>
+                                    {{donation.agency}}
+                                </td>
+                                <td>
+                                    {{donation.category}}
+                                </td>
+                                <td>
+                                    {{donation.date.toLocaleString()}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" v-show="donation.rowExpanded">
+                                    <table class="table table-striped table-sm mb-0" :id="'subRow' + index">
+                                        <thead>
+                                        <th>SubCategory</th>
+                                        <th>Donation Type</th>
+                                        <th>Weight</th>
+                                        <th>Quantity</th>
+                                        <th>Cases</th>
+                                        </thead>
+                                        <tbody>
+                                        <tr v-for="item in donation.lineItems">
+                                            <td>{{item.subCategory}}</td>
+                                            <td>{{item.dType}}</td>
+                                            <td>{{item.weight}}</td>
+                                            <td>{{item.quantity}}</td>
+                                            <td>{{item.cases}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <button class="btn btn-info shadow border border-secondary m-3 mt-0" v-on:click.prevent="generatePDF(donation)" data-toggle="modal" data-target="#exampleModalLong">Generate Receipt</button>
+                                </td>
+                            </tr>
+                        </template>
+                        </tbody>
+                    </table>
+                    <div>
+                        <button v-on:click="prevPage" class="btn btn-light border border-secondary shadow">Previous</button>
+                        <button v-on:click="nextPage" class="btn btn-light border border-secondary shadow">Next</button>
+                        <label>Page {{currentPage}} of {{totalPages}}</label>
+                        <label for="pageSize" style="padding-left:10px;margin-left:10px;border-left:solid 1px gray">Items Per Page: </label>
+                        <input type="number" id="pageSize" name="pageSize" v-model.lazy="pageSize" style="width:50px;" class="custom-control-inline" />
+                    </div>
+
+                    <hr />
+                    <div style="margin-top:10px;">
+                        <button class="btn btn-info shadow border border-secondary" v-on:click.prevent="generateFullPDF()" data-toggle="modal" data-target="#exampleModalLong">Generate Refined Search PDF</button>
+                        <a asp-page="/Transactions/IncomingDonation" class="btn btn-warning shadow border border-secondary" role="button">Add Incoming Donations </a>
+                        <a asp-page="/Transactions/OutgoingFood" class="btn btn-warning shadow border border-secondary" role="button">Add Outgoing Donations </a>
+                    </div>
+                </div>
+            </div>
+            }
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Donation Receipt</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center col-xs-12" id="report"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+<script>
+
+    Vue.component('datetime', DatePicker.default);
+    Vue.component('vue-multiselect', window.VueMultiselect.default);
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            donations: [
+                @if (Model.DonationTransaction != null)
+                {
+                    foreach (var item in Model.DonationTransaction)
+                    {
+                        @:{
+                        @:  rowExpanded: false,
+                        @:  tType: '@Html.DisplayFor(modelItem => item.TransactionType)',
+                        @:  agency: '@item.Agency.AgencyName - @item.Agency.Address.StreetAddress1 @item.Agency.Address.CityName, @item.Agency.Address.StateShortName',
+                        @:  category: '@Html.DisplayFor(modelItem => item.FoodCategory)',
+                        @:  date: new Date('@item.TimeStamp'),
+                        @:  lineItems: [
+                        foreach (var lineItem in item.TransactionLineItems)
+                        {
+                            @:  {
+                            @:  subCategory: '@lineItem.FoodCategory.Description',
+                            @:  dType: '@lineItem.DonationType.Type',
+                            @:  weight: @lineItem.Weight,
+                            if (lineItem.Quantity == null)
+                            {
+                                @: quantity: '-',
+                            }
+                            else
+                            {
+                                @: quantity: @lineItem.Quantity,
+                            }
+                            if (lineItem.Cases == null)
+                            {
+                                @: cases: '-',
+                            }
+                            else
+                            {
+                                @: cases: @lineItem.Cases,
+                            }
+                            @:  },
+                        }
+                        @:  ] },
+                    }
+                }
+            ],
+            transactionList: [
+                @{
+                    @: { groupLabel: 'All',
+                    @: groupValues: [
+
+                    foreach (var transaction in (TransactionTypeInOut[]) Enum.GetValues(typeof(TransactionTypeInOut)))
+                    {
+                        int id = (int) transaction;
+                        @:  { id: '@id', text: '@transaction' },
+                    }
+
+                    @: ] }
+                }
+            ],
+            foodCatList: [
+                @{
+                    @: { groupLabel: 'All',
+                    @: groupValues: [
+
+                    foreach (var cat in (FoodCategoryType[]) Enum.GetValues(typeof(FoodCategoryType)))
+                    {
+                        int id = (int) cat;
+                        @:  { id: '@id', text: '@cat' },
+                    }
+
+                    @: ]}
+                }
+            ],
+            agencyList: [
+                @{
+                    @: { groupLabel: 'Donors',
+                    @: groupValues: [
+
+                    foreach (var donor in Model.Donors)
+                    {
+                        @:  { id: '@donor.AgencyID', text: '@donor.AgencyName - @donor.Address.StreetAddress1 @donor.Address.CityName, @donor.Address.StateShortName @donor.Address.Zipcode' },
+                    }
+
+                    @: ] },
+                    @: { groupLabel: 'Non-Donors',
+                    @: groupValues: [
+
+                    foreach (var agency in Model.NonDonors)
+                    {
+                        @:  { id: '@agency.AgencyID', text: '@agency.AgencyName - @agency.Address.StreetAddress1 @agency.Address.CityName, @agency.Address.StateShortName @agency.Address.Zipcode' },
+                    }
+
+                    @: ] }
+                }
+            ],
+            currentSort: 'date',
+            currentSortDir: 'desc',
+            pageSize: 10,
+            currentPage: 1,
+            searchAgency: '',
+            @if (Model.InOutReport == null)
+            {
+                @:startDate:  new Date(new Date().setMonth(new Date().getMonth() -1)).setHours(0,0,0,0),
+                @:formStartDate: new Date(new Date().setMonth(new Date().getMonth() - 1)).setHours(0, 0, 0, 0),
+                @:endDate: new Date().setHours(23, 59, 59, 999),
+                @:formEndDate: new Date().setHours(23, 59, 59, 999),
+            }
+            else
+            {
+                @:startDate:  new Date('@Model.InOutReport.StartDate.ToString()'),
+                @:formStartDate: new Date('@Model.InOutReport.StartDate.ToString()'),
+                @:endDate: new Date('@Model.InOutReport.EndDate.ToString()'),
+                @:formEndDate: new Date('@Model.InOutReport.EndDate.ToString()'),
+            }
+            searchCat: '',
+            searchExpanded: true,
+            resultsExpanded: true,
+            formTranType: [
+                @if (Model.InOutReport != null && Model.InOutReport.TransactionTypes != null)
+                {
+                    foreach (var transaction in Model.InOutReport.TransactionTypes)
+                    {
+                        int id = (int) transaction;
+                        @:  { id: '@id', text: '@transaction' },
+                    }
+                }
+            ],
+            formFoodCat: [
+                @if (Model.InOutReport != null && Model.InOutReport.FoodCategories != null)
+                {
+                    foreach (var cat in Model.InOutReport.FoodCategories)
+                    {
+                        int id = (int) cat;
+                        @:  { id: '@id', text: '@cat' },
+                    }
+                }
+            ],
+            formAgencies: [
+                @if (Model.ReturnAgencies != null)
+                {
+                    foreach (var agency in Model.ReturnAgencies)
+                    {
+                        @:  { id: '@agency.AgencyID', text: '@agency.AgencyName - @agency.Address.StreetAddress1 @agency.Address.CityName, @agency.Address.StateShortName @agency.Address.Zipcode' },
+                    }
+                }
+            ],
+
+        },
+        watch: {
+            pageSize: function() {
+                if (this.pageSize < 1)
+                    this.pageSize = 1
+            },
+            totalPages: function() {
+                if (this.currentPage > this.totalPages)
+                    this.currentPage = 1
+            }
+        },
+        methods: {
+            getArrowClasses: function(column) {
+                var classes = ['fa']
+                if (column === this.currentSort && this.currentSortDir === 'desc')
+                    classes.push('text-primary', 'fa-sort-amount-down')
+                else if (column === this.currentSort && this.currentSortDir === 'asc')
+                    classes.push('text-primary', 'fa-sort-amount-up', 'fa-flip-vertical')
+                else
+                    classes.push('text-muted', 'fa-sort')
+                return classes
+
+            },
+            clearAll () {
+                this.formAgencies = []
+            },
+            sort: function(s) {
+                if (s === this.currentSort) {
+                    this.currentSortDir = this.currentSortDir === 'asc' ? 'desc' : 'asc';
+                }
+                this.currentSort = s;
+            },
+            nextPage: function() {
+                if ((this.currentPage * this.pageSize) < this.pdfDonations.length) this.currentPage++;
+            },
+            prevPage: function() {
+                if (this.currentPage > 1) this.currentPage--;
+            },
+            generatePDF(donation) {
+                var doc = new jsPDF('l', 'mm', 'a4')
+                var columns = [
+                    { title: "Subcategory", dataKey: "subCategory" },
+                    { title: "Donation Type", dataKey: "dType" },
+                    { title: "Weight", dataKey: "weight" },
+                    { title: "Quantity", dataKey: "quantity" },
+                    { title: "Cases", dataKey: "cases" }
+                ]
+
+                doc.setFontSize(30)
+                doc.text(donation.tType + ' Donation Report',
+                    doc.internal.pageSize.getWidth() / 2,
+                    15,
+                    null,
+                    null,
+                    'center')
+                doc.setFontSize(20)
+                doc.text('Donation Date: ' + donation.date.toDateString(), 15, 30)
+                doc.text('Agency: ' + donation.agency, 15, 40)
+                doc.text('Food Category: ' + donation.category, 15, 50)
+                doc.setFontSize(12)
+                doc.autoTable(columns,
+                    donation.lineItems,
+                    {
+                        startY: 60,
+                        showHeader: 'firstPage',
+                        createdCell: function(cell, data) {
+                            if (cell.raw === null) {
+                                cell.text = "-"
+                            }
+                        }
+                    })
+
+                doc.text("Total Rows: " + donation.lineItems.length, 15, doc.autoTable.previous.finalY + 10)
+
+                //doc.save('test.pdf')
+                var data = doc.output('datauristring')
+                document.getElementById('report').innerHTML =
+                    '<iframe style="height:500px;" class="offset-md-1 col-md-10" type="application/pdf" src="' +
+                    data +
+                    '"></iframe>'
+
+            },
+            generateFullPDF() {
+                var doc = new jsPDF('l', 'mm', 'a4')
+                doc.fromHTML('', 20, 20)
+                var columns = [
+                    { title: "Transaction", dataKey: "tType" },
+                    { title: "Agency", dataKey: "agency" },
+                    { title: "Food Category", dataKey: "category" },
+                    { title: "Date", dataKey: "date" }
+                ]
+
+                var subColumns = [
+                    { title: "Subcategory", dataKey: "subCategory" },
+                    { title: "Donation Type", dataKey: "dType" },
+                    { title: "Weight", dataKey: "weight" },
+                    { title: "Quantity", dataKey: "quantity" },
+                    { title: "Cases", dataKey: "cases" }
+                ]
+                doc.setFontSize(30)
+                doc.text('Full Donation Report', doc.internal.pageSize.getWidth() / 2, 15, null, null, 'center')
+                doc.setFontSize(10)
+                doc.text('Filters: Agencies = "' +
+                    this.searchAgency +
+                    '" | Food Category = "' +
+                    this.searchCat +
+                    '" | Between: ' +
+                    this.startDate.toLocaleString() +
+                    ' and ' +
+                    this.endDate.toLocaleString(),
+                    15,
+                    23)
+
+                var y_position = 15
+                this.pdfDonations.forEach(function(element) {
+                    if (y_position >= 170) {
+                        doc.addPage()
+                        y_position = 0
+                    }
+                    doc.setFontSize(14)
+                    doc.line(15, y_position + 10, 282, y_position + 10)
+                    doc.text(element.agency, 15, y_position + 18)
+                    doc.setFontSize(12)
+                    doc.text(element.tType +
+                        ' Donation | Food Category: ' +
+                        element.category +
+                        ' | Date: ' +
+                        element.date.toDateString(),
+                        15,
+                        y_position + 25)
+
+                    doc.autoTable(subColumns,
+                        element.lineItems,
+                        {
+                            startY: y_position + 30,
+                            showHeader: 'firstPage',
+                            createdCell: function(cell, data) {
+                                if (cell.raw === null) {
+                                    cell.text = "-"
+                                }
+                            }
+                        }
+                    )
+                    y_position = doc.autoTable.previous.finalY
+                })
+
+                var data = doc.output('datauristring')
+                document.getElementById('report').innerHTML =
+                    '<iframe style="height:500px;" class="offset-md-1 col-md-10" type="application/pdf" src="' +
+                    data +
+                    '"></iframe>'
+            }
+        },
+        computed: {
+            totalPages: function() {
+                return Math.ceil(this.pdfDonations.length / this.pageSize)
+            },
+            formTranTypeFixed: function() {
+                return this.formTranType.length === 0 ? [] : this.formTranType.map(m => (m.id))
+            },
+            formFoodCatFixed: function() {
+                return this.formFoodCat === null ? '' : this.formFoodCat.map(m => (m.id))
+            },
+            formAgenciesFixed: function() {
+                return this.formTranType.length === 0 ? [] : this.formAgencies.map(m => (m.id))
+            },
+            sortedDonations: function() {
+                return this.donations.filter(table => {
+                    return table.agency.toLowerCase().includes(this.searchAgency.toLowerCase())
+                }).filter(table => {
+                    return table.category.toLowerCase().includes(this.searchCat.toLowerCase())
+                }).filter(table => {
+                    return (table.date.getTime() < new Date(this.endDate).getTime() &&
+                        table.date.getTime() >= new Date(this.startDate).getTime())
+                }).sort((a, b) => {
+                    let modifier = 1;
+                    if (this.currentSortDir === 'desc') modifier = -1;
+                    if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+                    if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+                    return 0;
+                }).filter((row, index) => {
+                    let start = (this.currentPage - 1) * this.pageSize;
+                    let end = this.currentPage * this.pageSize;
+                    if (index >= start && index < end) return true;
+                });
+            },
+            pdfDonations: function() {
+                return this.donations.filter(table => {
+                    return table.agency.toLowerCase().includes(this.searchAgency.toLowerCase())
+                }).filter(table => {
+                    return table.category.toLowerCase().includes(this.searchCat.toLowerCase())
+                }).filter(table => {
+                    return (table.date.getTime() < new Date(this.endDate).getTime() &&
+                        table.date.getTime() >= new Date(this.startDate).getTime())
+                }).sort((a, b) => {
+                    let modifier = 1;
+                    if (this.currentSortDir === 'desc') modifier = -1;
+                    if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+                    if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+                    return 0;
+                });
+            }
+        },
+        mounted: function() {
+            @if (ViewData["savedTransaction"] != null)
+            {
+                var saved = (DonationTransaction) ViewData["savedTransaction"];
+                @: this.generatePDF(
+                @:{
+                @:  tType: '@Html.DisplayFor(modelItem => saved.TransactionType)',
+                @:  agency: '@saved.Agency.AgencyName - @saved.Agency.Address.StreetAddress1, @saved.Agency.Address.CityName, @saved.Agency.Address.StateShortName',
+                @:  category: '@Html.DisplayFor(modelItem => saved.FoodCategory)',
+                @:  date: new Date('@saved.TimeStamp.ToShortDateString()'),
+                @:  lineItems: [
+                foreach (var lineItem in saved.TransactionLineItems)
+                {
+                    @:  {
+                    @:  subCategory: '@lineItem.FoodCategory.Description',
+                    @:  dType: '@lineItem.DonationType.Type',
+                    @:  weight: @lineItem.Weight,
+                    if (lineItem.Quantity == null)
+                    {
+                        @: quantity: '-',
+                    }
+                    else
+                    {
+                        @: quantity: @lineItem.Quantity,
+                    }
+                    if (lineItem.Cases == null)
+                    {
+                        @: cases: '-',
+                    }
+                    else
+                    {
+                        @: cases: @lineItem.Cases,
+                    }
+                    @:  },
+                }
+                @:] })
+            }
+        }
+        })
+
+    @if (ViewData["savedTransaction"] != null)
+    {
+        @: $(window).on('load', function () { $('#exampleModalLong').modal('show'); });
+    }
+
+</script>
+    }

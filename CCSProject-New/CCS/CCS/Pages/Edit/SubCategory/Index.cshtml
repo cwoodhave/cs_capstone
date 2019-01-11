@@ -1,0 +1,52 @@
+﻿@page
+@model IndexModel
+@{
+	Layout = "_Layout";
+}
+
+<head>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+</head>
+<body>
+<div class="container">
+	<div id="first-row" class="col-lg-13 order-lg-2 main-col pl-lg-1">
+		<div class="row btn-row">
+			<div class="col btn-container btn-container2">
+				<a asp-page="/Edit/SubCategory/Grocery/Index" role="button" class="mainPageBtn">
+					<div class="rescue vertical-center" style="width:initial;">
+						<i class="fas fa-dolly" style="color:white; font-size:70px;"></i>
+					</div>
+					<hr/>
+					<div class="bottom-long-text">
+						GROCERY RESCUE
+					</div>
+
+				</a>
+			</div>
+			<div class="col btn-container btn-container2">
+				<a asp-page="/Edit/SubCategory/USDA/Index" role="button" class="mainPageBtn">
+					<div class="rescue vertical-center" style="width:initial;">
+						<i class="fas fa-gift" style="color:white; font-size:70px;"></i>
+					</div>
+					<hr/>
+					<div class="bottom-short-text">
+						USDA
+					</div>
+				</a>
+			</div>
+			<div class="col btn-container btn-container2">
+				<a asp-page="/Edit/SubCategory/Regular/Index" role="button" class="mainPageBtn">
+					<div class="rescue vertical-center" style="width:initial;">
+						<i class="fas fa-gift" style="color:white; font-size:70px;"></i>
+					</div>
+					<hr/>
+					<div class="bottom-short-text">
+						REGULAR
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+</body>

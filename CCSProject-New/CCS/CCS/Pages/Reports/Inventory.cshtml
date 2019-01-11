@@ -1,0 +1,449 @@
+﻿@page
+@model CCS.Pages.Reports.InventoryModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_FormLayout.cshtml";
+}
+<!--
+<head>
+    <script src="js/JsBarcode.all.js"></script>
+</head>
+-->
+<div id="app">
+
+    <h2 class="text-center p-3"><u>Containers</u></h2>
+
+    <div class="form-row">
+        <div class="col-lg-3 form-group">
+            <br />
+            <label for="searchType">Filter By Type</label>
+            <input id="searchType" v-model="searchType" class="form-control" placeholder="Search Type" />
+        </div>
+        <div class="col-lg-3 form-group">
+            <br />
+            <label for="searchDescription">Filter By Description</label>
+            <input id="searchDescription" v-model="searchDescription" class="form-control" placeholder="Search Description" />
+        </div>
+        <div class="col-lg-3 form-group border-left border-secondary">
+            <label class="mb-0">Filter By Dates Between:</label><br />
+            <label for="startDate">Start Date</label>
+            <datetime v-model="startDate" format="MM-DD-YYYY h:mm a" id="startDate"
+                      input-class="form-control" type="datetime" lang="en" width="100%" :minute-step="1" :clearable="false"></datetime>
+        </div>
+        <div class="col-lg-3 form-group">
+            <br />
+            <label for="endDate">End Date</label>
+            <datetime v-model="endDate" format="MM-DD-YYYY h:mm a" id="endDate"
+                      input-class="form-control" type="datetime" lang="en" width="100%" :minute-step="1" :clearable="false"></datetime>
+        </div>
+    </div>
+    <table class="table table-hover table-sm table-bordered bg-light">
+        <thead>
+            <tr>
+                <th v-on:click="sort('binNumber')" style="cursor: pointer" scope="col" class="text-nowrap">
+                    @Html.DisplayNameFor(model => model.Container[0].BinNumber)
+                    <span :class="getArrowClasses('binNumber')" aria-hidden="true"></span>
+                </th>
+                <th v-on:click="sort('category')" style="cursor: pointer" scope="col" class="text-nowrap">
+                    @Html.DisplayNameFor(model => model.Container[0].FoodCategory)
+                    <span :class="getArrowClasses('category')" aria-hidden="true"></span>
+                </th>
+                <th v-on:click="sort('description')" style="cursor: pointer" scope="col" class="text-nowrap">
+                    @Html.DisplayNameFor(model => model.Container[0].Description)
+                    <span :class="getArrowClasses('description')" aria-hidden="true"></span>
+                </th>
+                <th v-on:click="sort('weight')" style="cursor: pointer" scope="col" class="text-nowrap">
+                    @Html.DisplayNameFor(model => model.Container[0].Weight)
+                    <span :class="getArrowClasses('weight')" aria-hidden="true"></span>
+                </th>
+                <th v-on:click="sort('location')" style="cursor: pointer" scope="col" class="text-nowrap">
+                    @Html.DisplayNameFor(model => model.Container[0].Location)
+                    <span :class="getArrowClasses('location')" aria-hidden="true"></span>
+                </th>
+                <th v-on:click="sort('date')" style="cursor: pointer" scope="col" class="text-nowrap">
+                    @Html.DisplayNameFor(model => model.Container[0].DateCreated)
+                    <span :class="getArrowClasses('date')" aria-hidden="true"></span>
+                </th>
+                <th>
+
+                </th>
+                <th>
+
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <template v-for="(container, index) in sortedContainers">
+                <tr v-bind:key="index" data-toggle="collapse" :data-target="'#subRow' + index">
+                    <td>
+                        {{container.binNumber}}
+                    </td>
+                    <td>
+                        {{container.category}}
+                    </td>
+                    <td>
+                        {{container.description}}
+                    </td>
+                    <td>
+                        {{container.weight}}
+                    </td>
+                    <td>
+                        {{container.location}}
+                    </td>
+                    <td>
+                        {{container.date.toLocaleString()}}
+                    </td>
+                    <td>
+                        <button class="btn btn-info shadow border border-secondary" v-on:click.prevent="generatePDF(container)" data-toggle="modal" data-target="#exampleModalLong">
+                            <span class="fa fa-print"></span>
+                        </button>
+                    </td>
+                    <td>
+                        <form asp-page-handler="delete" v-bind:asp-route-id="container.id" method="post">
+                            <input type="hidden" v-bind:value="container.id" id="id" name="id" />
+                            <button class="btn btn-danger shadow border border-secondary" style="display: block;">
+                                <span class="fa fa-trash-alt"></span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            </template>
+        </tbody>
+    </table>
+    <div>
+        <button v-on:click="prevPage" class="btn btn-light border border-secondary shadow">Previous</button>
+        <button v-on:click="nextPage" class="btn btn-light border border-secondary shadow">Next</button>
+        <label>Page {{currentPage}} of {{totalPages}}</label>
+        <label for="pageSize" style="padding-left:10px;margin-left:10px;border-left:solid 1px gray">Items Per Page: </label>
+        <input type="number" id="pageSize" name="pageSize" v-model.lazy="pageSize" style="width:50px;" class="custom-control-inline" />
+    </div>
+
+    <hr />
+    <div style="margin-top:10px;">
+        <a asp-page="/Transactions/IncomingContainer" class="btn btn-warning shadow border border-secondary" role="button">Add Container</a>
+        <button class="btn btn-success shadow border border-secondary" v-on:click.prevent="generateFullPDF()" data-toggle="modal" data-target="#exampleModalLong">
+            <span> Print Full Report </span>
+        </button>
+        <button class="btn btn-info shadow border border-secondary" v-on:click.prevent="generateSelectedPDF()" data-toggle="modal" data-target="#exampleModalLong">
+            <span> Print Selected Report </span>
+        </button>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Container Receipt</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center col-xs-12" id="report"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+        Vue.component('datetime', DatePicker.default);
+
+        var app = new Vue({
+        el: '#app',
+        data: {
+            containers: [
+                @foreach (var item in Model.Container)
+                {
+                    @:{
+                    @:  id: '@item.ContainerID',
+                    @:  binNumber: '@item.BinNumber',
+                    @:  weight: '@item.Weight',
+                    @:  category: '@item.FoodCategory.Description',
+                    @:  description: '@item.Description',
+                    @:  location: '@item.Location',
+                    @:  date: new Date('@item.DateCreated'),
+                    @:},
+                }
+            ],
+            currentSort: 'date',
+            currentSortDir: 'desc',
+            pageSize: 10,
+            currentPage: 1,
+            searchAgency: '',
+            startDate:  new Date(new Date().setMonth(new Date().getMonth() -1)).setHours(0,0,0,0),
+            endDate: new Date().setHours(23, 59, 59, 999),
+            searchType: '',
+            searchDescription: ''
+        },
+        watch: {
+            pageSize: function () {
+                if (this.pageSize < 1)
+                    this.pageSize = 1
+            },
+            totalPages: function() {
+                if (this.currentPage > this.totalPages)
+                    this.currentPage = 1
+            }
+        },
+        methods: {
+            getArrowClasses: function (column) {
+                var classes = ['fa']
+                if (column === this.currentSort && this.currentSortDir === 'desc')
+                    classes.push('text-primary', 'fa-sort-amount-down')
+                else if (column === this.currentSort && this.currentSortDir === 'asc')
+                    classes.push('text-primary', 'fa-sort-amount-up', 'fa-flip-vertical')
+                else
+                    classes.push('text-muted', 'fa-sort')
+                return classes
+
+            },
+            sort: function (s) {
+                if (s === this.currentSort) {
+                    this.currentSortDir = this.currentSortDir === 'asc' ? 'desc' : 'asc';
+                }
+                this.currentSort = s;
+            },
+            nextPage: function () {
+                if ((this.currentPage * this.pageSize) < this.containers.length) this.currentPage++;
+            },
+            prevPage: function () {
+                if (this.currentPage > 1) this.currentPage--;
+            },
+            generatePDF(container) {
+                if (typeof container === 'number') {
+                    this.containers.find(function (e) { container = e; })
+                }
+                else if (typeof container === 'string') {
+                    this.containers.find(function (e) { container = e; })
+                }
+                var doc = new jsPDF('p', 'mm', 'a4')
+                doc.setFontSize(50)
+                doc.text('[BARCODE HERE]',
+                    doc.internal.pageSize.getWidth() / 2,
+                    20,
+                    null,
+                    null,
+                    'center')
+                doc.setFontSize(35)
+                //var barcode = JsBarcode(123, 'test');
+                //doc.addImage(barcode, 'JPEG', 15, 30, 150, 150);
+                doc.text(container.category,
+                    doc.internal.pageSize.getWidth() / 2,
+                    40,
+                    null,
+                    null,
+                    'center')
+                doc.text(container.description,
+                    doc.internal.pageSize.getWidth() / 2,
+                    60,
+                    null,
+                    null,
+                    'center')
+                doc.setFontSize(25)
+                doc.text(new Date(container.date).toDateString(),
+                    doc.internal.pageSize.getWidth() / 2,
+                    75,
+                    null,
+                    null,
+                    'center')
+                doc.text(container.location,
+                    doc.internal.pageSize.getWidth() / 2,
+                    90,
+                    null,
+                    null,
+                    'center')
+                
+                
+                //doc.save('test.pdf')*/
+                var data = doc.output('datauristring')
+                document.getElementById('report').innerHTML =
+                    '<iframe style="height:500px;" class="offset-md-1 col-md-10" type="application/pdf" src="' +
+                    data +
+                    '"></iframe>'
+
+                //$(window).on('load', function () { $('#exampleModalLong').modal('show'); });
+            },
+            generateFullPDF() {
+                var doc = new jsPDF('p', 'mm', 'a4')
+                doc.fromHTML('', 20, 20)
+                var columns = [
+                    { title: "Bin Number", dataKey: "binNumber" },
+                    { title: "Category", dataKey: "category" },
+                    { title: "Description", dataKey: "description" },
+                    { title: "Weight", dataKey: "weight" },
+                    { title: "Location", dataKey: "location" },
+                    { title: "Created Date", dataKey: "date" }
+                ]
+
+                doc.setFontSize(30)
+                doc.text('Container Inventory Report',
+                    doc.internal.pageSize.getWidth() / 2,
+                    20,
+                    null,
+                    null,
+                    'center')
+                doc.setFontSize(16)
+                doc.text('Report Date: ' + (new Date().toDateString()), 14, 30)
+
+                doc.autoTable(columns, this.containers,
+                    {
+                        startY: 35,
+                        showHeader: 'firstPage',
+                        createdCell: function (cell, data) {
+                            if (cell.raw === null) {
+                                cell.text = "-"
+                            }
+                            if (data.column.dataKey === 'date') {
+                                cell.text = cell.raw.toLocaleDateString()
+                            }
+                        }
+                    })
+
+                var data = doc.output('datauristring')
+                document.getElementById('report').innerHTML =
+                    '<iframe style="height:500px;" class="offset-md-1 col-md-10" type="application/pdf" src="' +
+                    data +
+                    '"></iframe>'
+            },
+            generateSelectedPDF() {
+                var doc = new jsPDF('p', 'mm', 'a4')
+                doc.fromHTML('', 20, 20)
+                var columns = [
+                    { title: "Bin Number", dataKey: "binNumber" },
+                    { title: "Category", dataKey: "category" },
+                    { title: "Description", dataKey: "description" },
+                    { title: "Weight", dataKey: "weight" },
+                    { title: "Location", dataKey: "location" },
+                    { title: "Created Date", dataKey: "date" }
+                ]
+
+                var filterType = document.getElementById("searchType").value.toLowerCase();
+                var filterDesc = document.getElementById("searchDescription").value.toLowerCase();
+                var startDate = this.startDate;
+                var endDate = this.endDate;
+
+                if (filterType === undefined || filterType === "") { filterType = "N/A"; }
+                if (filterDesc === undefined || filterDesc === "") { filterDesc = "N/A"; }
+
+                var filteredCols = [];
+                for (var i = 0; i < this.containers.length; i++) {
+                    var c = this.containers[i];
+                    if (c.date >= startDate && c.date <= endDate) {
+                        console.log("index " + i + "passed date");
+                        if (filterType === "N/A" || c.category.toLowerCase().includes(filterType)) {
+                            console.log("index " + i + "passed category");
+                            if (filterDesc === "N/A" || c.description.toLowerCase().includes(filterDesc)) {
+                                console.log("index " + i + "passed description");
+                                filteredCols.push(c);
+                            }
+                        }
+                        
+                    }
+                }
+                try {
+                    startDate = startDate.toDateString();
+                }
+                catch (err) {
+                    startDate = "N/A";
+                }
+                try {
+                    endDate = endDate.toDateString();
+                }
+                catch(err){
+                    endDate = "N/A";
+                }
+
+                doc.setFontSize(30);
+                doc.text('Container Inventory Report',
+                    doc.internal.pageSize.getWidth() / 2,
+                    20,
+                    null,
+                    null,
+                    'center')
+                doc.setFontSize(16);
+                doc.text('Report Date: ' + (new Date().toDateString()), 14, 30);
+                doc.setFontSize(12);
+                doc.text("Type Filter: " + filterType + " \tDescription Filter: " + filterDesc, 14, 38);
+                doc.text("Start Date: " + startDate + " \tEnd Date: " + endDate, 14, 46)
+
+                doc.autoTable(columns, filteredCols,
+                    {
+                        startY: 48,
+                        showHeader: 'firstPage',
+                        createdCell: function (cell, data) {
+                            if (cell.raw === null) {
+                                cell.text = "-"
+                            }
+                            if (data.column.dataKey === 'date') {
+                                cell.text = cell.raw.toLocaleDateString()
+                            }
+                        }
+                    })
+
+                var data = doc.output('datauristring')
+                document.getElementById('report').innerHTML =
+                    '<iframe style="height:500px;" class="offset-md-1 col-md-10" type="application/pdf" src="' +
+                    data +
+                    '"></iframe>'
+            }
+        },
+        computed: {
+            totalPages: function() {
+                return Math.ceil(this.containers.length / this.pageSize)
+            },
+            sortedContainers: function () {
+                return this.containers.filter(table => {
+                    return table.category.toLowerCase().includes(this.searchType.toLowerCase())
+                }).filter(table => {
+                    return table.description.toLowerCase().includes(this.searchDescription.toLowerCase())
+                }).filter(table => {
+                    return (table.date.getTime() < new Date(this.endDate).getTime()
+                        && table.date.getTime() >= new Date(this.startDate).getTime())
+                }).sort((a, b) => {
+                    let modifier = 1;
+                    if (this.currentSortDir === 'desc') modifier = -1;
+                    if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+                    if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+                    return 0;
+                }).filter((row, index) => {
+                    let start = (this.currentPage - 1) * this.pageSize;
+                    let end = this.currentPage * this.pageSize;
+                    if (index >= start && index < end) return true;
+                });
+            },
+        },
+        mounted: function () {
+            @if (ViewData["savedTransaction"] != null)
+            {
+                var saved = (Container)ViewData["savedTransaction"];
+                @:this.generatePDF(
+                @:{
+                @:  binNum: '@Html.DisplayFor(modelItem => saved.BinNumber)',
+                @:  category: '@Html.DisplayFor(modelItem => saved.FoodCategory.Description)',
+                @:  description: '@saved.Description',
+                @:  weight: '@saved.Weight',
+                @:  location: '@saved.Location',
+                @:  date: new Date('@saved.DateCreated.ToShortDateString()')
+                @:})
+            }
+        },
+    })
+
+    @if (ViewData["savedTransaction"] != null)
+    {
+        @: $(window).on('load', function () { $('#exampleModalLong').modal('show'); });
+    }
+
+    </script>
+}

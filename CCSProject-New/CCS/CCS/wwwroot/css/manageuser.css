@@ -1,0 +1,93 @@
+﻿body {
+}
+
+.container-list {
+    width: 100%;
+    height: 100%;
+}
+
+
+.container-list .text-align-center {
+    text-align: center;
+    font-size: 35px;
+}
+
+.container-list .create-align {
+    text-align: right;
+}
+
+.container-list .valid-warning {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+table{
+    border-collapse:collapse;
+}
+table thead tr th{
+   text-align: center;
+   vertical-align: central;
+   
+}
+table th, table td {
+    border-top: 1px solid rgba(0,0,0,0.2);
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+    
+}
+
+table tbody tr td {
+    text-align: center;
+    vertical-align: central;
+    font-size: 18px;
+}
+
+
+.form-signin {
+    width: 100%;
+    margin: auto;
+  }
+
+
+.form-signin .navContainer {
+    width:100%;
+}
+
+.form-signin .greeting {
+    padding-top: 15px;
+    padding-bottom: 0;
+    
+}
+
+
+.form-signin .containerSize {   
+    
+    width:80%;
+    height: auto;
+    margin:0px auto;
+    padding: 35px;
+    background-color: white;  
+}
+
+  
+
+.form-signin .textalign-left {
+    text-align: left;
+    
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+.form-signin .createHr {
+    width: 100%;
+    background-color: darkgray;
+    height: 1px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+   
+}
+
+#delete-warning {
+    font-weight: bold;
+    color: red;
+    font-size: 35px;
+}

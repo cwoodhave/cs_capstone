@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CCS</title>
+
+    <!-- JQuery -->
+    <script defer src="~/js/jquery-3.3.1.min.js"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="~/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/bootstrap/css/bootstrap-grid.min.css" />
+    <link rel="stylesheet" href="~/bootstrap/css/bootstrap-reboot.min.css" />
+    <script defer src="~/bootstrap/js/bootstrap.min.js"></script>
+    <script defer src="~/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom CSS -->
+
+    <link href="~/css/incoming.css" rel="stylesheet">
+    <link href="/css/manageuser.css" rel="stylesheet">  
+    <link href="~/css/navbar-fixed-left.min.css" rel="stylesheet">
+
+    <!-- Custom JS -->
+    <script defer src="~/js/site.js"></script>
+
+    <!-- Vue -->
+    <script src="~/vue_files/vue.js"></script>
+
+    <!-- PDFMaker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js" integrity="sha384-THVO/sM0mFD9h7dfSndI6TS0PgAGavwKvB5hAxRRvc0o9cPLohB0wb/PTA7LdUHs" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.3.5/jspdf.plugin.autotable.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
+    <!-- Vue DateTime Picker-->
+    <script src="https://unpkg.com/vue2-datepicker"></script>
+
+    <!-- Vue Searchable Dropdown-->
+    <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
+    <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
+
+    <!-- Font Awesome (Icons)-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+    @*
+        <environment include="Development">
+            <script src="~/lib/jquery/dist/jquery.js"></script>
+            <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+            <link rel="stylesheet" href="~/css/site.css" />
+        </environment>
+        <environment exclude="Development">
+            <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+                    asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+                    asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+            <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        </environment>
+    *@
+
+
+</head>
+<body>
+    <partial name="/Pages/Shared/_NavPartial.cshtml" />
+    <div class="container p-3">
+        <a asp-page="/Main">
+            <img src="~/images/CCSLogo.png" alt="CCS Logo" class="align-self-center" />
+        </a>
+      
+    </div>
+    @*<nav class="navbar-dark bg-dark navbar-expand-md navbar-fixed-left">
+            <div class="container">
+
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <a asp-page="/Main" class="navbar-brand">
+                        <img src="~/images/CCSLogoNoText.png" alt="CCS" height="25" />
+                        Homepage
+                    </a>
+                    <partial name="_LoginPartial" />
+                </div>
+                <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" >
+
+                    <ul class="nav navbar-nav px-2">
+                        <li><hr class="border-light" /></li>
+                        <li class="nav-item">
+                            <a class="nav-link dropdown-toggle" href="#"  role="button" data-toggle="collapse" data-target="#transactions">Transactions</a>
+                            <ul class="collapse show ml-3 navbar-nav nav" id="transactions">
+                                <li class="nav-item"><a asp-page="/Transactions/IncomingDonation" class="nav-link">Donation In</a></li>
+                                <li class="nav-item"><a asp-page="/Transactions/OutgoingFood" class="nav-link">Donation Out</a></li>
+                                <li class="nav-item"><a asp-page="/Transactions/IncomingContainer" class="nav-link">Containers</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="collapse" data-target="#reports">Reports</a>
+                            <ul class="collapse show ml-3 navbar-nav nav" id="reports">
+                                <li class="nav-item"><a asp-page="/Reports/Inventory" class="nav-link">Inventory</a></li>
+                                <li class="nav-item"><a asp-page="/Reports/DonationsByAgency" class="nav-link">Donations By Agency</a></li>
+                                <li class="nav-item"><a asp-page="/Reports/DonationLineItems" class="nav-link">Donations By Line Items</a></li>
+                                <li class="nav-item"><a asp-page="/Reports/DonationTransactions" class="nav-link">Donations By Transactions</a></li>
+                                <li class="nav-item"><a asp-page="/Reports/GroceryRescue" class="nav-link">Grocery Rescue</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="collapse" data-target="#management">Management</a>
+                            <ul class="collapse show ml-3 navbar-nav nav" id="management">
+                                <li class="nav-item"><a asp-page="/Edit/Index" class="nav-link">Edit Database</a></li>
+                                <li class="nav-item"><a asp-page="/Edit/Agencies/Index" class="nav-link">Agencies</a></li>
+                                <li class="nav-item"><a asp-page="/ManageAccount/Index" class="nav-link">Users</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </nav>*@
+
+    <div class="container">
+
+
+        @RenderBody()
+
+
+        <hr />
+        <footer id="footer-align">
+            <a asp-page="/About">
+                <p>&copy; 2018 - CCS</p>
+            </a>
+        </footer>
+
+    </div>
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+        </script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

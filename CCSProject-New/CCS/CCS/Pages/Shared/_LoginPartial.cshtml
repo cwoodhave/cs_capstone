@@ -1,0 +1,64 @@
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<CCSUser> SignInManager
+@inject UserManager<CCSUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <form asp-page="/Login/Logout" asp-route-returnUrl="/Login/Login" method="post" id="logoutForm" class="navbar-right">
+        <div class="row pb-2">
+            <div class="loginsection-left">
+                <div class="ml-3 mt-2 pt-1">
+                    <a asp-page="/Main" class="navbar-brand rounded p-2 bg-light">
+                        <img src="~/images/CCSLogoNoText.png" alt="CCS" height="25" />
+                    </a>
+                </div>
+            </div>
+          
+            
+            <div class="loginsection-right">
+                <div class="navbar-nav">
+                    @*<div class="pr-3 mt-2 ml-3">
+                        <a class="nav-link" asp-page="/Login/Profile" title="Manage">
+                            <i class="fas fa-user" style="color:white; font-size:40px;"></i>
+                        </a>
+                    </div>*@
+
+                    <div class="pt-2 pr-0">
+                        <div class="ml-1">
+                            <font style="color:white; font-size:18px;">@UserManager.GetUserName(User)</font><br />
+                        </div>
+                        <div class="row">
+                            <div class="ml-3 mt-0 pt-0">
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn nav-link mt-1 pt-0" asp-page="/Login/Profile" data-toggle="modal" data-target="#editModelLong" style="background-color: transparent; border-color:#6C3483; box-shadow: none;">
+                                    <i class="fas fa-users-cog" style="color:white; font-size:18px;"></i>
+                                </button>
+
+                                @*<a class="nav-link" asp-page="/Login/Profile" title="Edit Account">
+                                    <i class="fas fa-users-cog" style="color:white; font-size:18px;"></i>
+                                </a>*@
+
+                            </div>
+                            <div class="ml-3 mt-0 pt-0">
+                                <button type="submit" class="btn btn-link mt-1 ml-1 p-0" title="Logout">
+                                    <i class="fas fa-user-times" style="color:white; font-size:15px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    </form>
+}
+else
+{
+    <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" asp-page="/ManageAccount/Create">Create Account</a></li>
+        <li class="nav-item"><a class="nav-link" asp-page="/Login/Login">Login</a></li>
+    </ul>
+}

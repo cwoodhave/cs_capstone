@@ -1,0 +1,549 @@
+﻿@page
+@model CCS.Pages.Reports.GroceryRescueModel
+@{
+    ViewData["Title"] = "GroceryRescue";
+    Layout = "~/Pages/Shared/_FormLayout.cshtml";
+}
+
+<div id="app">
+
+    <h2 class="text-center p-3"><u>Grocery Rescue Report</u></h2>
+
+    <div class="border border-secondary bg-white rounded card">
+        <div class="card-header p-0">
+            <button class="text-center btn btn-secondary btn-block" role="button" v-on:click="searchExpanded = !searchExpanded">
+                <h4>Search Transaction Line Items <span :class="[searchExpanded ? 'fa-minus-square' : 'fa-plus-square', 'fas']"></span></h4>
+            </button>
+        </div>
+        <div class="card-body" v-show="searchExpanded">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label asp-for="GroceryReport.StartDate" class="control-label"></label>
+                        <input type="text" class="form-control d-none" v-model="startDate" required />
+                        <datetime input-name="GroceryReport.StartDate" v-model="startDate" format="MM-DD-YYYY h:mm a" id="GroceryReport_StartDate"
+                                  input-class="form-control" type="datetime" lang="en" width="100%" :minute-step="1" :clearable="false"></datetime>
+                        <span asp-validation-for="GroceryReport.StartDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col">
+                        <label asp-for="GroceryReport.EndDate" class="control-label"></label>
+                        <input type="text" class="form-control d-none" v-model="endDate" required />
+                        <datetime input-name="GroceryReport.EndDate" v-model="endDate" format="MM-DD-YYYY h:mm a" id="GroceryReport_EndDate"
+                                  input-class="form-control" type="datetime" lang="en" width="100%" :minute-step="1" :clearable="false"></datetime>
+                        <span asp-validation-for="GroceryReport.EndDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label asp-for="GroceryReport.Agency" class="control-label"></label>
+                        <input asp-for="GroceryReport.Agency" class="form-control" />
+                        <span asp-validation-for="GroceryReport.Agency" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col">
+                        <label asp-for="GroceryReport.Phone" class="control-label"></label>
+                        <input asp-for="GroceryReport.Phone" class="form-control" />
+                        <span asp-validation-for="GroceryReport.Phone" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col">
+                        <label asp-for="GroceryReport.Email" class="control-label"></label>
+                        <input asp-for="GroceryReport.Email" class="form-control" />
+                        <span asp-validation-for="GroceryReport.Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label asp-for="GroceryReport.Contact" class="control-label"></label>
+                        <input asp-for="GroceryReport.Contact" class="form-control" />
+                        <span asp-validation-for="GroceryReport.Contact" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col">
+                        <label asp-for="GroceryReport.MCNum" class="control-label"></label>
+                        <input asp-for="GroceryReport.MCNum" class="form-control" />
+                        <span asp-validation-for="GroceryReport.MCNum" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col">
+                        <label asp-for="GroceryReport.RENum" class="control-label"></label>
+                        <input asp-for="GroceryReport.RENum" class="form-control" />
+                        <span asp-validation-for="GroceryReport.RENum" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Generate Report" class="btn btn-success shadow border-secondary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (Model.Results != null)
+    {
+        <div class="border border-secondary mt-2 card">
+            <div class="card-header p-0">
+                <button class="text-center btn btn-secondary btn-block" role="button" v-on:click="resultsExpanded = !resultsExpanded">
+                    <h4>Database Results <span :class="[resultsExpanded ? 'fa-minus-square' : 'fa-plus-square', 'fas']"></span></h4>
+                </button>
+            </div>
+
+            <div class="card-body" v-show="resultsExpanded">
+
+                <div id="reportHeader" class="bg-white p-2">
+                    <div class="row m-2">
+                        <div class="col-2 bg-white"  id="ufb_image" >
+                            <img src="./../images/ufb_logo.png" height="50"/>
+                        </div>
+                        <div class="col-8 text-center">
+                            <h2>Grocery Rescue Report</h2>
+                        </div>
+                    </div>
+                    <div class="row m-3">
+                        <div class="col-1 d-flex align-text-bottom"><span>Agency:</span></div>
+                        <div class="col-3 border-bottom border-secondary  d-flex align-text-bottom"><span>@Model.GroceryReport.Agency</span></div>
+                        <div class="col-1 d-flex align-text-bottom"><span>Phone:</span></div>
+                        <div class="col-3 border-bottom border-secondary  d-flex align-text-bottom"><span>@Model.GroceryReport.Phone</span></div>
+                        <div class="col-1 d-flex align-text-bottom"><span>Email:</span></div>
+                        <div class="col-3 border-bottom border-secondary  d-flex align-text-bottom"><span>@Model.GroceryReport.Email</span></div>
+                    </div>
+                    <div class="row m-3">
+                        <div class="col-1 d-flex align-text-bottom"><span>Contact:</span></div>
+                        <div class="col-3 border-bottom border-secondary  d-flex align-text-bottom"><span>@Model.GroceryReport.Contact</span></div>
+                        <div class="col-1 d-flex align-text-bottom"><span>MC#:</span></div>
+                        <div class="col-3 border-bottom border-secondary  d-flex align-text-bottom"><span>@Model.GroceryReport.MCNum</span></div>
+                        <div class="col-1 d-flex align-text-bottom"><span>RE#:</span></div>
+                        <div class="col-3 border-bottom border-secondary  d-flex align-text-bottom"><span>@Model.GroceryReport.RENum</span></div>
+                    </div>
+                    <div class="row m-3">
+                        <div class="col-1 d-flex align-text-bottom"><span>From:</span></div>
+                        <div class="col-3 border-bottom border-secondary  d-flex align-text-bottom"><span>@Model.GroceryReport.StartDate.ToShortDateString()</span></div>
+                        <div class="col-1 d-flex align-text-bottom"><span>Thru:</span></div>
+                        <div class="col-3 border-bottom border-secondary  d-flex align-text-bottom"><span>@Model.GroceryReport.EndDate.ToShortDateString()</span></div>
+                    </div>
+                </div>
+
+                 <div class="form-row"> 
+                     <div class="col-lg-3 form-group"> 
+                         <br />
+                         <label for="searchAgency">Refine Search By Agency</label> 
+                         <input id="searchAgency" v-model="searchAgency" class="form-control" placeholder="Search Agency" /> 
+                     </div> 
+                 </div> 
+                 <table class="table table-hover table-sm table-bordered bg-light">
+                <thead>
+                    <tr>
+                        <th v-on:click="sort('agency')" style="cursor: pointer" scope="col" class="text-nowrap">
+                            @Html.DisplayNameFor(model => model.Results.FirstOrDefault().Agency)
+                            <span :class="getArrowClasses('agency')" aria-hidden="true"></span>
+                        </th>
+                        <th v-on:click="sort('bakery')" style="cursor: pointer" scope="col" class="text-nowrap">
+                            @Html.DisplayNameFor(model => model.Results.FirstOrDefault().Bakery)
+                            <span :class="getArrowClasses('bakery')" aria-hidden="true"></span>
+                        </th>
+                        <th v-on:click="sort('dairy')" style="cursor: pointer" scope="col" class="text-nowrap">
+                            @Html.DisplayNameFor(model => model.Results.FirstOrDefault().Dairy)
+                            <span :class="getArrowClasses('dairy')" aria-hidden="true"></span>
+                        </th>
+                        <th v-on:click="sort('deli')" style="cursor: pointer" scope="col" class="text-nowrap">
+                            @Html.DisplayNameFor(model => model.Results.FirstOrDefault().Deli)
+                            <span :class="getArrowClasses('deli')" aria-hidden="true"></span>
+                        </th>
+                        <th v-on:click="sort('dryGrocery')" style="cursor: pointer" scope="col" class="text-nowrap">
+                            @Html.DisplayNameFor(model => model.Results.FirstOrDefault().DryGrocery)
+                            <span :class="getArrowClasses('dryGrocery')" aria-hidden="true"></span>
+                        </th>
+                        <th v-on:click="sort('frozen')" style="cursor: pointer" scope="col" class="text-nowrap">
+                            @Html.DisplayNameFor(model => model.Results.FirstOrDefault().Frozen)
+                            <span :class="getArrowClasses('frozen')" aria-hidden="true"></span>
+                        </th>
+                        <th v-on:click="sort('meat')" style="cursor: pointer" scope="col" class="text-nowrap">
+                            @Html.DisplayNameFor(model => model.Results.FirstOrDefault().Meat)
+                            <span :class="getArrowClasses('meat')" aria-hidden="true"></span>
+                        </th>
+                        <th v-on:click="sort('nonFood')" style="cursor: pointer" scope="col" class="text-nowrap">
+                            @Html.DisplayNameFor(model => model.Results.FirstOrDefault().NonFood)
+                            <span :class="getArrowClasses('nonFood')" aria-hidden="true"></span>
+                        </th>
+                        <th v-on:click="sort('produce')" style="cursor: pointer" scope="col" class="text-nowrap">
+                            @Html.DisplayNameFor(model => model.Results.FirstOrDefault().Produce)
+                            <span :class="getArrowClasses('produce')" aria-hidden="true"></span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template v-for="(item, index) in sortedGroceryItems">
+                        <tr v-bind:key="index">
+                            <td>
+                                {{item.agency}}
+                            </td>
+                            <td>
+                                {{item.bakery}}
+                            </td>
+                            <td>
+                                {{item.dairy}}
+                            </td>
+                            <td>
+                                {{item.deli}}
+                            </td>
+                            <td>
+                                {{item.dryGrocery}}
+                            </td>
+                            <td>
+                                {{item.frozen}}
+                            </td>
+                            <td>
+                                {{item.meat}}
+                            </td>
+                            <td>
+                                {{item.nonFood}}
+                            </td>
+                            <td>
+                                {{item.produce}}
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+                <div>
+                    <button v-on:click="prevPage" class="btn btn-light border border-secondary shadow">Previous</button>
+                    <button v-on:click="nextPage" class="btn btn-light border border-secondary shadow">Next</button>
+                    <label>Page {{currentPage}} of {{totalPages}}</label>
+                    <label for="pageSize" style="padding-left:10px;margin-left:10px;border-left:solid 1px gray">Items Per Page: </label>
+                    <input type="number" id="pageSize" name="pageSize" v-model.lazy="pageSize" style="width:50px;" class="custom-control-inline" />
+                </div>
+
+                <hr />
+                <div style="margin-top:10px;">
+                    <button class="btn btn-info shadow border border-secondary" v-on:click.prevent="generateFullPDF()" data-toggle="modal" data-target="#exampleModalLong">Generate Grocery Report PDF</button>
+                    <button class="btn btn-primary shadow border border-secondary" v-on:click.prevent="JSONToCSVConvertor(sortedPdfGroceryItems, 'Report', true)">Download Excel</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Donation Receipt</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center col-xs-12" id="report"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+<script>
+
+        Vue.component('datetime', DatePicker.default);
+        Vue.component('vue-multiselect', window.VueMultiselect.default);
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                groceryItems: [
+                    @if (Model.Results != null)
+                    {
+                        foreach (var item in Model.Results)
+                        {
+                            @:{
+                            @:      agency: '@item.Agency',
+                            @:      storeCode: '',
+                            @:      bakery: '@item.Bakery',
+                            @:      dairy: '@item.Dairy',
+                            @:      deli: '@item.Deli',
+                            @:      dryGrocery: '@item.DryGrocery',
+                            @:      frozen: '@item.Frozen',
+                            @:      meat: '@item.Meat',
+                            @:      nonFood: '@item.NonFood',
+                            @:      produce: '@item.Produce'
+                            @: },
+                        }
+                    }
+                ],
+                currentSort: 'date',
+                currentSortDir: 'desc',
+                pageSize: 10,
+                currentPage: 1,
+                searchAgency: '',
+                @if (Model.GroceryReport == null)
+                {
+                    @:startDate:  new Date(new Date().setMonth(new Date().getMonth() -1)).setHours(0,0,0,0),
+                    @:endDate: new Date().setHours(23, 59, 59, 999),
+                }
+                else
+                {
+                    @:startDate:  new Date('@Model.GroceryReport.StartDate.ToString()'),
+                    @:endDate: new Date('@Model.GroceryReport.EndDate.ToString()'),
+                }
+                searchExpanded: true,
+                resultsExpanded: true,
+            },
+            watch: {
+                pageSize: function() {
+                    if (this.pageSize < 1)
+                        this.pageSize = 1
+                },
+                totalPages: function() {
+                    if (this.currentPage > this.totalPages)
+                        this.currentPage = 1
+                }
+            },
+            methods: {
+                getArrowClasses: function(column) {
+                    var classes = ['fa']
+                    if (column === this.currentSort && this.currentSortDir === 'desc')
+                        classes.push('text-primary', 'fa-sort-amount-down')
+                    else if (column === this.currentSort && this.currentSortDir === 'asc')
+                        classes.push('text-primary', 'fa-sort-amount-up', 'fa-flip-vertical')
+                    else
+                        classes.push('text-muted', 'fa-sort')
+                    return classes
+
+                },
+                sort: function(s) {
+                    if (s === this.currentSort) {
+                        this.currentSortDir = this.currentSortDir === 'asc' ? 'desc' : 'asc';
+                    }
+                    this.currentSort = s;
+                },
+                nextPage: function() {
+                    if ((this.currentPage * this.pageSize) < this.sortedPdfGroceryItems.length) this.currentPage++;
+                },
+                prevPage: function() {
+                    if (this.currentPage > 1) this.currentPage--;
+                },
+                generateFullPDF() {
+                    let doc = new jsPDF('p', 'mm', 'a4')
+                    let columns = [
+                        { title: "Agency", dataKey: "agency" },
+                        { title: "Bakery", dataKey: "bakery" },
+                        { title: "Dairy", dataKey: "dairy" },
+                        { title: "Deli", dataKey: "deli" },
+                        { title: "Dry\nGrocery", dataKey: "dryGrocery" },
+                        { title: "Frozen\n(Non-Meat)", dataKey: "frozen" },
+                        { title: "Meat", dataKey: "meat" },
+                        { title: "Non-Food", dataKey: "nonFood" },
+                        { title: "Produce", dataKey: "produce" }
+                    ]
+                    doc.setFontSize(30)
+                    doc.text('Grocery Rescue Report', doc.internal.pageSize.getWidth() / 2, 20, null, null, 'center')
+
+                    let offsetX = 10
+                    let offsetY = 35
+                    let labelOffset = 16
+                    let colWidth = 65
+                    let colHeight = 10
+                    let col2X = offsetX + colWidth
+                    let col2Y = offsetY + colHeight
+                    let col3X = offsetX + 2 * colWidth
+                    let col3Y = offsetY + 2 * colHeight
+                    let fieldFontSize = 10
+                    let labelFontSize = 12
+
+                    doc.setFontSize(labelFontSize)
+                    doc.text("Agency: ", offsetX, offsetY)
+                    doc.setFontSize(fieldFontSize)
+                    doc.text('@(Model.GroceryReport == null ? "" : Model.GroceryReport.Agency)', offsetX + labelOffset, offsetY)
+                    doc.line(offsetX + labelOffset, offsetY + 2, col2X - 5, offsetY + 2)
+                    doc.setFontSize(labelFontSize)
+                    doc.text("Phone: ", col2X, offsetY)
+                    doc.setFontSize(fieldFontSize)
+                    doc.text('@(Model.GroceryReport == null ? "" : Model.GroceryReport.Phone)', col2X + labelOffset, offsetY)
+                    doc.line(col2X + labelOffset, offsetY + 2, col3X - 5, offsetY + 2)
+                    doc.setFontSize(labelFontSize)
+                    doc.text("Email: ", col3X, offsetY)
+                    doc.setFontSize(8)
+                    doc.text('@(Model.GroceryReport == null ? "" : Model.GroceryReport.Email)', col3X + labelOffset, offsetY)
+                    doc.line(col3X + labelOffset, offsetY + 2, 210 - offsetX, offsetY + 2)
+                    doc.setFontSize(labelFontSize)
+                    doc.text("Contact: ", offsetX, col2Y)
+                    doc.setFontSize(fieldFontSize)
+                    doc.text('@(Model.GroceryReport == null ? "" : Model.GroceryReport.Contact)', offsetX + labelOffset, col2Y)
+                    doc.line(offsetX + labelOffset, col2Y + 2, col2X - 5, col2Y + 2)
+                    doc.setFontSize(labelFontSize)
+                    doc.text("MC#: ", col2X, col2Y)
+                    doc.setFontSize(fieldFontSize)
+                    doc.text('@(Model.GroceryReport == null ? "" : Model.GroceryReport.MCNum)', col2X + labelOffset, col2Y)
+                    doc.line(col2X + labelOffset, col2Y + 2, col3X - 5, col2Y + 2)
+                    doc.setFontSize(labelFontSize)
+                    doc.text("RE#: ", col3X, col2Y)
+                    doc.setFontSize(fieldFontSize)
+                    doc.text('@(Model.GroceryReport == null ? "" : Model.GroceryReport.RENum)', col3X + labelOffset, col2Y)
+                    doc.line(col3X + labelOffset, col2Y + 2, 210 - offsetX, col2Y + 2)
+                    doc.setFontSize(labelFontSize)
+                    doc.text("From: ", offsetX, col3Y)
+                    doc.setFontSize(fieldFontSize)
+                    doc.text('@(Model.GroceryReport == null ? "" : Model.GroceryReport.StartDate.ToShortDateString())', offsetX + labelOffset, col3Y)
+                    doc.line(offsetX + labelOffset, col3Y + 2, col2X - 5, col3Y + 2)
+                    doc.setFontSize(labelFontSize)
+                    doc.text("Thru: ", col2X, col3Y)
+                    doc.setFontSize(fieldFontSize)
+                    doc.text('@(Model.GroceryReport == null ? "" : Model.GroceryReport.EndDate.ToShortDateString())', col2X + labelOffset, col3Y)
+                    doc.line(col2X + labelOffset, col3Y + 2, col3X - 5, col3Y + 2)
+
+                    //Add Table to pdf (below where we will place header)
+                    doc.autoTable(columns,
+                        this.sortedPdfGroceryItems,
+                        {
+                            startY: 70,
+                            showHeader: 'firstPage',
+                            styles: { overflow: 'linebreak' },
+                            margin: {horizontal: 10},
+                            columnStyles: { text: { columnWidth: 'auto' }, agency: {columnWidth: 50}},
+                            createdCell: function(cell, data) {
+                                if (cell.raw === null) {
+                                    cell.text = "-"
+                                }
+                                if (data.column.dataKey === 'date') {
+                                    cell.text = cell.raw.toLocaleDateString()
+                                }
+                            }
+                        })
+
+                    //Styling fixes for the reportHeader div in pdf
+                    var element = document.getElementById('ufb_image');
+                    doc.internal.scaleFactor = 4;
+
+                    var w = element.clientWidth;
+                    var h = element.clientHeight;
+                    var newCanvas = document.createElement('canvas');
+                    newCanvas.width = w * 2;
+                    newCanvas.height = h * 2;
+                    newCanvas.style.width = w + 'px';
+                    newCanvas.style.height = h + 'px';
+                    var context = newCanvas.getContext('2d');
+                    context.scale(2, 2);
+
+                    doc.addHTML(element, 10,12, { pagesplit: true, canvas: newCanvas },
+                        function(dispose) {
+                            var data = doc.output('datauristring')
+                            document.getElementById('report').innerHTML =
+                                '<iframe style="height:500px;" class="offset-md-1 col-md-10" type="application/pdf" src="' +
+                                data +
+                                '"></iframe>'
+                        });
+
+                },
+                JSONToCSVConvertor: function(JSONData, ReportTitle, ShowLabel) {
+                    //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
+                    var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+
+                    var CSV = '';
+                    //Set Report title in first row or line
+
+                    CSV += ReportTitle + '\r\n\n';
+
+                    //This condition will generate the Label/Header
+                    if (ShowLabel) {
+                        var row = "";
+
+                        //This loop will extract the label from 1st index of on array
+                        for (var index in arrData[0]) {
+
+                            //Now convert each value to string and comma-seprated
+                            row += index + ',';
+                        }
+
+                        row = row.slice(0, -1);
+
+                        //append Label row with line break
+                        CSV += row + '\r\n';
+                    }
+
+                    //1st loop is to extract each row
+                    for (var i = 0; i < arrData.length; i++) {
+                        var row = "";
+
+                        //2nd loop will extract each column and convert it in string comma-seprated
+                        for (var index in arrData[i]) {
+                            row += '"' + arrData[i][index] + '",';
+                        }
+
+                        row.slice(0, row.length - 1);
+
+                        //add a line break after each row
+                        CSV += row + '\r\n';
+                    }
+
+                    if (CSV == '') {
+                        alert("Invalid data");
+                        return;
+                    }
+
+                    //Generate a file name
+                    var fileName = "MyReport_";
+                    //this will remove the blank-spaces from the title and replace it with an underscore
+                    fileName += ReportTitle.replace(/ /g, "_");
+
+                    //Initialize file format you want csv or xls
+                    var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
+
+                    // Now the little tricky part.
+                    // you can use either>> window.open(uri);
+                    // but this will not work in some browsers
+                    // or you will not get the correct file extension
+
+                    //this trick will generate a temp <a /> tag
+                    var link = document.createElement("a");
+                    link.href = uri;
+
+                    //set the visibility hidden so it will not effect on your web-layout
+                    link.style = "visibility:hidden";
+                    link.download = fileName + ".csv";
+
+                    //this part will append the anchor tag and remove it after automatic click
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                },
+            },
+            computed: {
+                totalPages: function() {
+                    return Math.ceil(this.sortedPdfGroceryItems.length / this.pageSize)
+                },
+                formAgenciesFixed: function() {
+                    return this.formTranType.length === 0 ? [] : this.formAgencies.map(m => (m.id))
+                },
+                sortedGroceryItems: function() {
+                    return this.groceryItems.filter(table => {
+                        return table.agency.toLowerCase().includes(this.searchAgency.toLowerCase())
+                    }).sort((a, b) => {
+                        let modifier = 1;
+                        if (this.currentSortDir === 'desc') modifier = -1;
+                        if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+                        if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+                        return 0;
+                    }).filter((row, index) => {
+                        let start = (this.currentPage - 1) * this.pageSize;
+                        let end = this.currentPage * this.pageSize;
+                        if (index >= start && index < end) return true;
+                    });
+                },
+                sortedPdfGroceryItems: function() {
+                    return this.groceryItems.filter(table => {
+                        return table.agency.toLowerCase().includes(this.searchAgency.toLowerCase())
+                    }).sort((a, b) => {
+                        let modifier = 1;
+                        if (this.currentSortDir === 'desc') modifier = -1;
+                        if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+                        if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+                        return 0;
+                    });
+                }
+            }
+        })
+
+</script>
+
+}

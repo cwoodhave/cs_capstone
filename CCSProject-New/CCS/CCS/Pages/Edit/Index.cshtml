@@ -1,0 +1,112 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Edit Database";
+    Layout = "_Layout";
+}
+
+<head>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div id="first-row" class="col-lg-3 order-lg-2 main-col pl-lg-1">
+				<div class="row">
+					<div class="column-title center-text">AGENCIES</div>
+				</div>
+				<div class="row btn-row">
+					<div class="col btn-container">
+						<a asp-page="/Edit/Agencies/Index" role="button" class="mainPageBtn longBtn">
+							<div class="agencies vertical-center">
+								<i class="fas fa-users" style="color:white; font-size:70px;"></i>
+								@*<i class="fas fa-sign-in-alt" style="color:white; font-size:70px;"></i>*@
+							</div>
+							<hr />
+							<div class="bottom-short-text vertical-center">
+								AGENCIES
+							</div>
+						</a>
+					</div>
+				</div>
+				<div class="row btn-row">
+					<div class="col btn-container">
+						<a asp-page="/Edit/Addresses/Delete" role="button" class="mainPageBtn longBtn">
+							<div class="donation-type vertical-center">
+								<i class="fas fa-map-marked-alt" style="color:white; font-size:70px;"></i>
+								@*<i class="fas fa-sign-out-alt" style="color:white; font-size:70px;"></i>*@
+							</div>
+							<hr />
+							<div class="bottom-short-text vertical-center">
+								REMOVE ADDRESS
+							</div>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-1 col-md-0 order-lg-1">
+				<div class="row divider-row">
+					<div class="col border-right"> </div>
+					<div class="col"> </div>
+				</div>
+			</div>
+			<div id="second-row" class="col-lg-3 order-lg-0 main-col">
+				<div class="row">
+					<div class="column-title center-text">DONATION TYPE</div>
+				</div>
+				<div class="row btn-row">
+					<div class="col btn-container">
+						<a asp-page="/Edit/DonationType/Index" role="button" class="mainPageBtn longBtn">
+							<div class="foodPack vertical-center">
+								<i class="fas fa-hand-holding-usd" style="color:white; font-size:70px;"></i>
+							</div>
+							<hr />
+							<div class="bottom-short-text vertical-center">
+								Donation Type
+							</div>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-1 col-md-0 order-lg-3">
+				<div class="row divider-row">
+					<div class="col border-right"> </div>
+					<div class="col"> </div>
+				</div>
+			</div>
+			<div id="third-row" class="col-lg-3 order-lg-4 main-col pl-lg-1">
+				<div class="row">
+					<div class="column-title center-text">CATEGORIES</div>
+				</div>
+				<div class="row btn-row">
+					<div class="col btn-container">
+						<a asp-page="/Edit/FoodCategory/Index" role="button" class="mainPageBtn longBtn">
+							<div class="category vertical-center">
+								<i class="fas fa-list" style="color:white; font-size:70px;"></i>
+							</div>
+							<hr />
+							<div class="bottom-short-text vertical-center">
+								FOOD CATEGORIES
+							</div>
+						</a>
+					</div>
+				</div>
+
+				@*<div class="row btn-row">
+					<div class="col btn-container">
+						<a asp-page="/Edit/SubCategory/Index" role="button" class="mainPageBtn longBtn">
+							<div class="category vertical-center">
+								<i class="fas fa-list" style="color:white; font-size:70px;"></i>
+							</div>
+							<hr />
+							<div class="bottom-short-text vertical-center">
+								SUB CATEGORIES
+							</div>
+						</a>
+					</div>
+				</div>*@
+			</div>
+		</div>
+	</div>
+</body>

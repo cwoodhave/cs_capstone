@@ -1,0 +1,366 @@
+﻿@page
+@model CCS.Pages.Transactions.IncomingDonationModel
+
+@{
+    Layout = "_FormLayout";
+    ViewData["Title"] = "Incoming Donation";
+}
+
+
+
+<div id="app">
+
+    <h2 class="text-center mt-2">Incoming Donation</h2>
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <form method="post" asp-page="IncomingDonation" class="needs-validation container" novalidate>
+        <div class="border border-secondary rounded bg-white p-3 mb-2">
+            <div class="row">
+                <div class="form-group col-md-6 donorTop">
+                    <div class="d-flex">
+                        <label asp-for="DonationTransaction.AgencyID" class="control-label mr-auto">Donor</label>
+                        <div class="pb-2">
+                            <a asp-page="/Edit/Agencies/Create" role="button" class="btn btn-info shadow border-secondary">Add Donor</a>
+                        </div>
+                    </div>
+
+                    <vue-multiselect v-model="donor" track-by="Donor" label="Donor" accesskey="ID" style="padding: 0;"
+                                     placeholder="Select Donor" :options="Donors" :class="[donor === null ? 'is-invalid' : 'containerColor', 'form-control']" :searchable="true"></vue-multiselect>
+                    <input type="text" asp-for="DonationTransaction.AgencyID" class="d-none form-control" v-model="donorFixed" required />
+                    <div class="invalid-feedback">Donor is required!</div>
+                </div>
+
+                <div class="form-group col-md-6 dateBottom">
+                    <label asp-for="DonationTransaction.TimeStamp" class="control-label">Date</label><br />
+                    <datetime input-name="DonationTransaction.TimeStamp" v-model="date" format="MM-DD-YYYY h:mm a" id="DonationTransaction_TimeStamp"
+                              :input-class="[date === null ? 'is-invalid' : 'containerColor', 'form-control']" type="datetime" lang="en" width="100%" :minute-step="1" :clearable="false"></datetime>
+                    <input type="text" class="form-control d-none" v-model="date" required />
+                    <div class="invalid-feedback">Date is required!</div>
+                </div>
+            </div>
+            <div class="form-group categorySelection">
+                <label class="control-label categoryLabel">Category Selection</label>
+                <div class="form-check">
+
+                    <label for="Regular" class="radio-inline control-label pr-2">
+                        <input type="radio" asp-for="DonationTransaction.FoodCategory" id="Regular" value="Regular" v-model="category" />
+                        Regular
+                    </label>
+
+                    <label for="USDA" class="radio-inline control-label pr-2">
+                        <input type="radio" asp-for="DonationTransaction.FoodCategory" id="USDA" value="USDA" v-model="category" />
+                        USDA
+                    </label>
+
+                    <label for="Grocery" class="radio-inline control-label pr-2">
+                        <input type="radio" asp-for="DonationTransaction.FoodCategory" id="Grocery" value="Grocery" v-model="category" />
+                        Grocery Rescue
+                    </label>
+
+                    <label for="Pantry" class="radio-inline control-label pr-2">
+                        <input type="radio" asp-for="DonationTransaction.FoodCategory" id="Pantry" value="Pantry" v-model="category" />
+                        Pantry Pack
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="border border-secondary  rounded bg-white p-3">
+            <div class="row">
+                <div class="col text-center" v-show="category !== 'Pantry'">
+                    <label class="control-label">{{catFixed}} Categories</label>
+                </div>
+                <div class="col text-center">
+                    <label class="control-label">Weight</label>
+                </div>
+                <div class="col text-center">
+                    <label class="control-label">Donation Type</label>
+                </div>
+                <div class="col text-center" v-show="category === 'USDA'">
+                    <label class="control-label">Cases</label>
+                </div>
+                <div class="col text-center" v-show="category === 'Pantry'">
+                    <label class="control-label">Quantity</label>
+                </div>
+                <div class="col-1">
+
+                </div>
+            </div>
+            <div v-for="(line, index) in lines" v-bind:key="index">
+                <div :class="[index%2 === 0 ? '' : '']">
+                    <div class="container-fluid">
+                        <div class="form-row text-center">
+                            <div class="form-group col" v-show="category !== 'Pantry'">
+                                <select :id="'LineItems[' + index + '].FoodCategoryID'" :name="'LineItems[' + index + '].FoodCategoryID'"
+                                        class="form-control containerColor" v-model="line.selectedSub" required>
+                                    <option disabled value="" selected>Select Category</option>
+                                    <option v-for="c in selectedCategory" :value="c.ID">{{c.Category}}</option>
+                                </select>
+                                <div class="invalid-feedback">Subcategory is required!</div>
+                            </div>
+
+                            <div class="form-group col">
+                                <input v-model="line.weight" type="number" :id="'LineItems[' + index + '].Weight'" :name="'LineItems[' + index + '].Weight'" min="1" class="form-control containerColor" v-on:change="line.weight < 0 ? line.weight = 0 : line.weight" />
+                                <div class="invalid-feedback">Weight must be greater than zero</div>
+                            </div>
+                            <div class="form-group col">
+                                <select :id="'LineItems[' + index + '].DonationTypeID'" :name="'LineItems[' + index + '].DonationTypeID'" class="form-control containerColor" v-model="line.selectedType" required="">
+                                    <option disabled value="" selected>Select Donation Type</option>
+                                    <option v-for="t in DonationType" :value="t.ID">{{t.Type}}</option>
+                                </select>
+                                <div class="invalid-feedback">Donation type is required!</div>
+                            </div>
+                            <div class="form-group col" v-show="category === 'Pantry'">
+                                <input v-model="line.quantity" type="number" :id="'LineItems[' + index + '].Quantity'" :name="'LineItems[' + index + '].Quantity'" class="form-control containerColor" v-on:change="line.quantity < 0 ? line.quantity = 0 : line.quantity" />
+                            </div>
+                            <div class="form-group col" v-show="category === 'USDA'">
+                                <input v-model="line.cases" type="number" :id="'LineItems[' + index + '].Cases'" :name="'LineItems[' + index + '].Cases'" class="form-control containerColor" v-on:change="line.cases < 0 ? line.cases = 0 : line.cases" />
+                            </div>
+                            <div class="form-group col-1">
+                                <button class="btn btn-danger shadow border border-secondary" v-on:click.prevent="removeLine(index)" style="display: block;">
+                                    <span class="fa fa-trash-alt"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group" v-if="index + 1 === lines.length">
+                        <div class="addLineButton">
+                            <button class="btn btn-primary shadow border border-secondary" id="addLineButton" v-on:click.prevent="addLine(num)">Add Line Item(s)</button>
+                        </div>
+                        <div class="addLineNumber">
+                            <input v-model.number="num" v-if="index + 1 === lines.length" type="number" value="1" min="1" max="10" class="form-control containerColor" style="width: 60px;" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <hr align="left" width="90%" />
+
+            <div class="row">
+                <div class="buttonAlign">
+                    <input type="submit" value="Save" class="btn btn-success border-secondary"/>
+                </div>
+                <div class="col-md-5 mb-3">
+                    <a class="btn btn-warning border-secondary" asp-page="/Main" role="button">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+
+        Vue.component('datetime', DatePicker.default);
+        Vue.component('vue-multiselect', window.VueMultiselect.default);
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                donor: { ID: '', Donor: 'Select Donor'},
+                //date: '@DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm")',
+                date: new Date(),
+                lines: [],
+                blockRemoval: true,
+                num: 1,
+                category: 'Regular',
+                PantryPack: [{ ID: @Model.ViewModel.PantryPack.FoodCategoryID, Category: '@Model.ViewModel.PantryPack.Description' }],
+                Regular: [
+                            @foreach (var cat in Model.ViewModel.RegularFoodCategories.Select((value,i) => new { i, value}))
+                            {
+                                if(cat.i == Model.ViewModel.RegularFoodCategories.Count() - 1)
+                                {
+                                    @:{ ID: @cat.value.FoodCategoryID , Category: '@cat.value.Description' }
+                                }
+                                else
+                                {
+                                    @:{ ID: @cat.value.FoodCategoryID , Category: '@cat.value.Description' },
+                                }
+
+                            }
+                        ],
+                USDA: [
+                        @foreach (var cat in Model.ViewModel.USDAFoodCategories.Select((value,i) => new { i, value}))
+                        {
+                            if(cat.i == Model.ViewModel.USDAFoodCategories.Count() - 1)
+                            {
+                                @:{ ID: @cat.value.FoodCategoryID , Category: '@cat.value.Description' }
+                            }
+                            else
+                            {
+                                @:{ ID: @cat.value.FoodCategoryID , Category: '@cat.value.Description' },
+                            }
+
+                        }
+                    ],
+                Grocery: [
+                            @foreach (var cat in Model.ViewModel.GroceryFoodCategories.Select((value,i) => new { i, value}))
+                            {
+                                if(cat.i == Model.ViewModel.GroceryFoodCategories.Count() - 1)
+                                {
+                                    @:{ ID: @cat.value.FoodCategoryID , Category: '@cat.value.Description' }
+                                }
+                                else
+                                {
+                                    @:{ ID: @cat.value.FoodCategoryID , Category: '@cat.value.Description' },
+                                }
+
+                            }
+                        ],
+                Donors: [
+                            @foreach (var donor in Model.ViewModel.Donors.Select((value,i) => new { i, value}))
+                            {
+                                if(donor.i == Model.ViewModel.Donors.Count() - 1)
+                                {
+                                    @:{ ID: @donor.value.AgencyID , Donor: '@donor.value.AgencyName - @donor.value.Address.StreetAddress1 @donor.value.Address.CityName, @donor.value.Address.StateShortName @donor.value.Address.Zipcode' }
+                                }
+                                else
+                                {
+                                    @:{ ID: @donor.value.AgencyID , Donor: '@donor.value.AgencyName - @donor.value.Address.StreetAddress1 @donor.value.Address.CityName, @donor.value.Address.StateShortName @donor.value.Address.Zipcode' },
+                                }
+
+                            }
+                        ],
+                DonationType: [
+                                @foreach (var type in Model.ViewModel.DonationTypes.Select((value,i) => new { i, value}))
+                                {
+                                    if(type.i == Model.ViewModel.DonationTypes.Count() - 1)
+                                    {
+                                        @:{ ID: @type.value.DonationTypeID , Type: '@type.value.Type' }
+                                    }
+                                    else
+                                    {
+                                        @:{ ID: @type.value.DonationTypeID , Type: '@type.value.Type' },
+                                    }
+
+                                }
+                            ]
+            },
+            computed: {
+                catFixed: function() {
+                    return this.category === 'Grocery' ? this.category + ' Rescue' : this.category
+                },
+                donorFixed: function() {
+                    return this.donor === null ? '' : this.donor.ID
+                },
+                selectedCategory: function () {
+                    switch (this.category) {
+                        case 'Grocery':
+                            return this.Grocery
+                            break;
+                        case 'USDA':
+                            return this.USDA
+                            break;
+                        case 'Pantry':
+                            return this.PantryPack
+                            break;
+                        default:
+                            return this.Regular
+                    }
+                }
+            },
+            watch: {
+                lines() {
+                    this.blockRemoval = this.lines.length <= 1
+                },
+                category() {
+                    if (this.category === 'Pantry') {
+                        this.lines.splice(1)
+                        this.lines[0].selectedSub = this.PantryPack[0].ID
+                        this.lines[0].quantity = 0
+                        this.lines[0].cases = 0
+                    }
+                    else if (this.category === 'Grocery') {
+                        this.lines.length = 0
+                        this.Grocery.forEach(item => {
+                            this.lines.push({
+                                selectedSub: item.ID,
+                                weight: 0,
+                                selectedType: '',
+                                quantity: 0,
+                                cases: 0,
+                            });
+                        });
+                    }
+                    else {
+                        this.lines.splice(1)
+                        this.lines[0].selectedSub = ''
+                        this.lines[0].quantity = 0
+                        this.lines[0].cases = 0
+                    }
+                },
+                num()
+                {
+                    if (this.num > 10)
+                        this.num = 10
+                    else if (this.num < 1)
+                        this.num = 1
+                }
+            },
+            methods: {
+                addLine(num = 1) {
+                    if (num > 10) num = 10;
+                    else if (num < 1) num = 1;
+
+                    var lastIndex = this.lines.length - 1
+
+                    if (lastIndex < 0) {
+                        this.lines.push({
+                            selectedSub: '',
+                            weight: 0,
+                            selectedType: '',
+                            quantity: 0,
+                            cases: 0,
+                        });
+                    } else {
+                        for (var i = 0; i < num; i++) {
+                            this.lines.push({
+                                selectedSub: this.category === 'Pantry' ? this.PantryPack[0].ID: '',
+                                weight: 0,
+                                selectedType: this.lines[lastIndex].selectedType,
+                                quantity: 0,
+                                cases: 0
+                            });
+                        }
+                        this.num = 1;
+                        this.$nextTick(function() { document.getElementById('addLineButton').scrollIntoView(false); });
+                    }
+
+
+                },
+                removeLine(lineID) {
+                    if (!this.blockRemoval) this.lines.splice(lineID, 1)
+                }
+            },
+            mounted() {
+                this.addLine()
+            }
+        });
+
+
+    </script>
+}

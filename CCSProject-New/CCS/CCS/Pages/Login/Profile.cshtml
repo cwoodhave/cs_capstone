@@ -1,0 +1,64 @@
+﻿@page
+@model CCS.Pages.ManageAccount.ProfileModel
+
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Pages/Shared/_EditProfileLayout.cshtml";
+}
+
+<h2>Hello @Model.CCSUser.FirstName</h2>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+<hr />
+<div class="row">
+
+    <div class="col-md-4">
+        <form method="post" asp-page-handler="UpdateProfile">
+            <h4>Update User Profile</h4>
+            <div class="form-group">
+                <label for="newFirstName" class="control-label">First Name</label>
+                <input id="newFirstName" name="newFirstName" class="form-control" value="@Model.CCSUser.FirstName" />
+            </div>
+            <div class="form-group">
+                <label for="newLastName" class="control-label">Last Name</label>
+                <input id="newLastName" name="newLastName" class="form-control" value="@Model.CCSUser.LastName" />
+            </div>
+            <div class="form-group">
+                <label for="newUserName" class="control-label">User Name</label>
+                <input id="newUserName" name="newUserName" class="form-control" value="@Model.CCSUser.UserName" />
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Update Profile" class="btn btn-success border-secondary shadow" />
+            </div>
+        </form>
+        <form method="post" asp-page-handler="ChangePassword">
+            <hr />
+            <h4>Change Password</h4>
+            <div class="form-group">
+                <label for="oldPassword" class="control-label">Old Password</label>
+                <input id="oldPassword" name="oldPassword" type="password" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label for="newPassword" class="control-label">New Password</label>
+                <input id="newPassword" name="newPassword" type="password" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="newPasswordVerify" class="control-label">Verify New Password</label>
+                <input id="newPasswordVerify" name="newPasswordVerify" type="password" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Update Password" class="btn btn-success border-secondary shadow" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (ViewBag.AlertMessage != null)
+{
+    <script type="text/javascript">
+        alert("@ViewBag.AlertMessage");
+    </script>
+
+}
