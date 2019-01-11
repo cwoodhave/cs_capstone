@@ -1,10 +1,8 @@
 # CatholicCommunityServices
 CS4790 Final Project - Group 1 - CCS
 
-
-**CCS ERD Diagram:**
-
-https://www.lucidchart.com/invitations/accept/9ea3bf4b-6a10-42ee-9d1b-5262d604bbeb
+### Description
+This was a capstone project for a local food bank inventory management system. 
 
 
 ### Login
